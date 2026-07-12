@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Страноведение / Country Studies</title>
+    <style>
+        /* ===== ОСНОВНЫЕ СТИЛИ (без изменений) ===== */
+        :root {
+            --bg-main: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #0052b4;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 20px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-main);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            padding: 60px 0 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, #f1f5f9 0%, #ffffff 100%);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        #langToggle {
+            position: fixed;
+            top: 16px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
+            padding: 4px 6px;
+            border-radius: 40px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border: 1px solid var(--border-color);
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: box-shadow 0.2s;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        #langToggle:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+        }
+        #langToggle .lang-option {
+            padding: 6px 14px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s;
+            color: var(--text-muted);
+            background: transparent;
+            cursor: pointer;
+        }
+        #langToggle .lang-option.active {
+            background: #0f172a;
+            color: #fff;
+        }
+        #langToggle .lang-option:not(.active):hover {
+            background: #e2e8f0;
+        }
+        .main-menu {
+            padding: 50px 0;
+        }
+        .menu-title {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .flags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .flag-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .flag-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+        .flag-img-wrapper {
+            width: 100%;
+            aspect-ratio: 3 / 2;
+            overflow: hidden;
+            background-color: #f1f5f9;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .flag-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .flag-name {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--bg-main);
+        }
+        .flag-card.quiz-card-menu .flag-img-wrapper {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        .country-page {
+            display: none;
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+            animation: fadeSlide 0.3s ease;
+        }
+        .country-page.active {
+            display: block;
+        }
+        .country-page:nth-child(even) {
+            background-color: var(--bg-secondary);
+        }
+        .country-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .country-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        .back-to-top {
+            margin-left: auto;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .back-to-top:hover {
+            text-decoration: underline;
+        }
+        .knowledge-category {
+            margin-bottom: 40px;
+        }
+        .knowledge-category h3 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .facts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .fact-item {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .fact-number {
+            font-weight: 700;
+            color: var(--accent-blue);
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+        .fact-avatar img {
+            width: 80px;
+            height: auto;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: white;
+            padding: 4px;
+        }
+        .symbols-section {
+            margin-bottom: 50px;
+            padding: 20px 0;
+            border-bottom: 2px dashed var(--border-color);
+        }
+        .symbols-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+        .symbol-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
+        .symbol-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .symbol-card .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .symbol-card img {
+            max-width: 100%;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+        }
+        .symbol-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 8px 0 4px;
+        }
+        .symbol-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .sights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .sight-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .sight-card:hover {
+            transform: scale(1.02);
+        }
+        .sight-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+        .sight-card .caption {
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            background: var(--bg-secondary);
+        }
+        .holiday-calendar {
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+        }
+        .holiday-calendar h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #0f172a;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .calendar-month {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .calendar-month h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+        .calendar-month ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .calendar-month li {
+            padding: 4px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            gap: 8px;
+        }
+        .calendar-month li .day {
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 30px;
+        }
+        .calendar-month li .event {
+            flex: 1;
+        }
+        .quiz-container {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .quiz-q-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .option-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: #e2e8f0;
+        }
+        .option-btn.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+            font-weight: 600;
+        }
+        .option-btn.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .next-btn {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            display: none;
+        }
+        .next-btn:hover {
+            background: #1e293b;
+        }
+        .quiz-explain {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+        }
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #0052b4;
+            color: #fff;
+            border: none;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,82,180,0.4);
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #scrollToTopBtn:hover {
+            background: #003d8a;
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,82,180,0.5);
+        }
+        #scrollToTopBtn:active {
+            transform: scale(0.95);
+        }
+        @media (max-width: 768px) {
+            header { padding: 40px 0 25px; }
+            header h1 { font-size: 1.8rem; }
+            .flags-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+            .flag-name { padding: 12px; font-size: 1rem; }
+            .country-header h2 { font-size: 1.5rem; }
+            .country-header { flex-wrap: wrap; gap: 10px; }
+            .back-to-top { width: 100%; margin-top: 5px; }
+            .quiz-container { padding: 20px; }
+            #langToggle { top: 10px; right: 10px; padding: 4px 8px; }
+            #langToggle .lang-option { padding: 4px 10px; font-size: 0.85rem; }
+            .calendar-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .symbols-grid { grid-template-columns: 1fr; }
+            .sights-grid { grid-template-columns: 1fr 1fr; }
+            #scrollToTopBtn { width: 48px; height: 48px; font-size: 24px; bottom: 20px; right: 20px; }
+            .calendar-grid { grid-template-columns: 1fr; }
+        }
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .hidden { display: none !important; }
+        .lang-ru .lang-en-only { display: none !important; }
+        .lang-en .lang-ru-only { display: none !important; }
+        .lang-en .lang-en-only { display: inline !important; }
+        .lang-ru .lang-ru-only { display: inline !important; }
+        .lang-en .lang-en-only-block { display: block !important; }
+        .lang-ru .lang-ru-only-block { display: block !important; }
+        .lang-en .lang-ru-only-block { display: none !important; }
+        .lang-ru .lang-en-only-block { display: none !important; }
+        .lang-en .flex-en { display: flex !important; }
+        .lang-ru .flex-ru { display: flex !important; }
+        .lang-en .flex-ru { display: none !important; }
+        .lang-ru .flex-en { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="langToggle" role="button" tabindex="0" aria-label="Switch language">
+        <span class="lang-option active" data-lang="en">EN</span>
+        <span class="lang-option" data-lang="ru">RU</span>
+    </div>
+    <header>
+        <div class="container">
+            <h1>
+                <span class="lang-en-only">English‑Speaking Countries</span>
+                <span class="lang-ru-only">Англоязычные страны</span>
+            </h1>
+            <p>
+                <span class="lang-en-only">Interactive country‑studies database for exams &amp; olympiads</span>
+                <span class="lang-ru-only">Интерактивная база страноведческих знаний для ВПР и олимпиад</span>
+            </p>
+        </div>
+    </header>
+    <main class="container main-menu" id="mainMenu">
+        <h2 class="menu-title">
+            <span class="lang-en-only">Choose a country:</span>
+            <span class="lang-ru-only">Выберите страну:</span>
+        </h2>
+        <div class="flags-grid">
+            <div class="flag-card" data-target="usa">
+                <div class="flag-img-wrapper"><img src="https://flagcdn.com/w640/us.png" alt="USA flag" /></div>
+                <div class="flag-name"><span class="lang-en-only">United States of America</span><span class="lang-ru-only">Соединённые Штаты Америки</span></div>
+            </div>
+            <div class="flag-card" data-target="uk">
+                <div class="flag-img-wrapper"><img src="https://flagcdn.com/w640/gb.png" alt="UK flag" /></div>
+                <div class="flag-name"><span class="lang-en-only">United Kingdom of Great Britain and Northern Ireland</span><span class="lang-ru-only">Соединённое Королевство Великобритании и Северной Ирландии</span></div>
+            </div>
+            <div class="flag-card" data-target="australia">
+                <div class="flag-img-wrapper"><img src="https://flagcdn.com/w640/au.png" alt="Australia flag" /></div>
+                <div class="flag-name"><span class="lang-en-only">Commonwealth of Australia</span><span class="lang-ru-only">Австралийский Союз</span></div>
+            </div>
+            <div class="flag-card" data-target="newzealand">
+                <div class="flag-img-wrapper"><img src="https://flagcdn.com/w640/nz.png" alt="New Zealand flag" /></div>
+                <div class="flag-name"><span class="lang-en-only">New Zealand</span><span class="lang-ru-only">Новая Зеландия</span></div>
+            </div>
+            <div class="flag-card" data-target="canada">
+                <div class="flag-img-wrapper"><img src="https://flagcdn.com/w640/ca.png" alt="Canada flag" /></div>
+                <div class="flag-name"><span class="lang-en-only">Canada</span><span class="lang-ru-only">Канада</span></div>
+            </div>
+            <div class="flag-card quiz-card-menu" data-target="vpr-quiz">
+                <div class="flag-img-wrapper">📝</div>
+                <div class="flag-name"><span class="lang-en-only">Quiz</span><span class="lang-ru-only">Тест</span></div>
+            </div>
+        </div>
+    </main>
+    <!-- ===== СТРАНА: США ===== -->
+    <section id="usa" class="country-page">
+        <div class="container">
+            <div class="country-header">
+                <h2><span class="lang-en-only">United States of America</span><span class="lang-ru-only">Соединённые Штаты Америки</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="symbols-section">
+                <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
+                <div class="symbols-grid">
+                    <div class="symbol-card"><img src="https://flagcdn.com/w640/us.png" style="height:80px;" /><h4><span class="lang-en-only">Flag</span><span class="lang-ru-only">Флаг</span></h4><p><span class="lang-en-only">13 stripes – colonies, 50 stars – states.</span><span class="lang-ru-only">13 полос – колонии, 50 звёзд – штаты.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🦅</span><h4><span class="lang-en-only">Bald Eagle</span><span class="lang-ru-only">Белоголовый орлан</span></h4><p><span class="lang-en-only">National symbol of freedom.</span><span class="lang-ru-only">Национальный символ свободы.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🗽</span><h4><span class="lang-en-only">Statue of Liberty</span><span class="lang-ru-only">Статуя Свободы</span></h4><p><span class="lang-en-only">Gift from France, symbol of democracy.</span><span class="lang-ru-only">Подарок от Франции, символ демократии.</span></p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
+                <div class="sights-grid">
+                    <div class="sight-card"><img src="https://cdn2.tu-tu.ru/image/pagetree_node_data/1/c36cb80ef869183d60298b4f102b69ee/" /><div class="caption"><span class="lang-en-only">Statue of Liberty</span><span class="lang-ru-only">Статуя Свободы</span></div></div>
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/i?id=d4927d14f44e76f46568d2054fcc0a1a_l-8186163-images-thumbs&n=13" /><div class="caption"><span class="lang-en-only">Grand Canyon</span><span class="lang-ru-only">Большой Каньон</span></div></div>
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/i?id=3094b823105e859779d97448e29e1018_l-5287214-images-thumbs&n=13" /><div class="caption"><span class="lang-en-only">White House</span><span class="lang-ru-only">Белый дом</span></div></div>
+                </div>
+            </div>
+            <div class="knowledge-category" data-facts="usa-geo"></div>
+            <div class="knowledge-category" data-facts="usa-history"></div>
+            <div class="knowledge-category" data-facts="usa-people"></div>
+            <div class="knowledge-category" data-facts="usa-society"></div>
+            <div class="knowledge-category" data-facts="usa-food"></div>
+            <div class="holiday-calendar" id="calendar-usa"></div>
+        </div>
+    </section>
+    <!-- ===== СТРАНА: ВЕЛИКОБРИТАНИЯ ===== -->
+    <section id="uk" class="country-page">
+        <div class="container">
+            <div class="country-header">
+                <h2> <span class="lang-en-only">United Kingdom of Great Britain and Northern Ireland</span><span class="lang-ru-only">Соединённое Королевство Великобритании и Северной Ирландии</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="symbols-section">
+                <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
+                <div class="symbols-grid">
+                    <div class="symbol-card"><img src="https://flagcdn.com/w640/gb.png" style="height:80px;" /><h4><span class="lang-en-only">Union Jack</span><span class="lang-ru-only">Юнион Джек</span></h4><p><span class="lang-en-only">Combines crosses of St George, St Andrew and St Patrick.</span><span class="lang-ru-only">Объединяет кресты св. Георгия, св. Андрея и св. Патрика.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌹</span><h4><span class="lang-en-only">Tudor Rose</span><span class="lang-ru-only">Роза Тюдоров</span></h4><p><span class="lang-en-only">Symbol of peace after the Wars of the Roses.</span><span class="lang-ru-only">Символ мира после войны Алой и Белой розы.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌿</span><h4><span class="lang-en-only">Thistle</span><span class="lang-ru-only">Чертополох</span></h4><p><span class="lang-en-only">Scottish symbol of resilience.</span><span class="lang-ru-only">Шотландский символ стойкости.</span></p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
+                <div class="sights-grid">
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/get-vertis-journal/4466156/marcin-nowak-iXqTqC-f6jI-unsplash.jpg_1705826457641/orig" /><div class="caption"><span class="lang-en-only">Big Ben</span><span class="lang-ru-only">Биг-Бен</span></div></div>
+                    <div class="sight-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Tower_Bridge_from_Shad_Thames.jpg/1280px-Tower_Bridge_from_Shad_Thames.jpg" /><div class="caption"><span class="lang-en-only">Tower Bridge</span><span class="lang-ru-only">Тауэрский мост</span></div></div>
+                    <div class="sight-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/960px-Stonehenge2007_07_30.jpg" /><div class="caption"><span class="lang-en-only">Stonehenge</span><span class="lang-ru-only">Стоунхендж</span></div></div>
+                </div>
+            </div>
+            <div class="knowledge-category" data-facts="uk-geo"></div>
+            <div class="knowledge-category" data-facts="uk-history"></div>
+            <div class="knowledge-category" data-facts="uk-symbols"></div>
+            <div class="knowledge-category" data-facts="uk-people"></div>
+            <div class="knowledge-category" data-facts="uk-food"></div>
+            <div class="holiday-calendar" id="calendar-uk"></div>
+        </div>
+    </section>
+    <!-- ===== СТРАНА: АВСТРАЛИЯ ===== -->
+    <section id="australia" class="country-page">
+        <div class="container">
+            <div class="country-header">
+                <h2> <span class="lang-en-only">Commonwealth of Australia</span><span class="lang-ru-only">Австралийский Союз</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="symbols-section">
+                <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
+                <div class="symbols-grid">
+                    <div class="symbol-card"><img src="https://flagcdn.com/w640/au.png" style="height:80px;" /><h4><span class="lang-en-only">Flag</span><span class="lang-ru-only">Флаг</span></h4><p><span class="lang-en-only">Commonwealth Star, Southern Cross.</span><span class="lang-ru-only">Звезда Содружества, Южный Крест.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🦘</span><h4><span class="lang-en-only">Kangaroo & Emu</span><span class="lang-ru-only">Кенгуру и Эму</span></h4><p><span class="lang-en-only">Symbolise forward movement.</span><span class="lang-ru-only">Символизируют движение вперёд.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌿</span><h4><span class="lang-en-only">Golden Wattle</span><span class="lang-ru-only">Золотая акация</span></h4><p><span class="lang-en-only">National flower.</span><span class="lang-ru-only">Национальный цветок.</span></p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
+                <div class="sights-grid">
+                    <div class="sight-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/SydneyOperaHouse.jpg/1280px-SydneyOperaHouse.jpg" /><div class="caption"><span class="lang-en-only">Sydney Opera House</span><span class="lang-ru-only">Сиднейский оперный театр</span></div></div>
+                    <div class="sight-card"><img src="https://s9.travelask.ru/uploads/post/000/009/032/main_image/full-b8a67778539aec83e63ebb47ca2d6ab6.jpg" /><div class="caption"><span class="lang-en-only">Uluru</span><span class="lang-ru-only">Улуру</span></div></div>
+                    <div class="sight-card"><img src="https://i.pinimg.com/originals/bf/e5/7a/bfe57a587d143bc8f8424fc3f1230f60.jpg?nii=t" /><div class="caption"><span class="lang-en-only">Great Barrier Reef</span><span class="lang-ru-only">Большой Барьерный риф</span></div></div>
+                </div>
+            </div>
+            <div class="knowledge-category" data-facts="australia-geo"></div>
+            <div class="knowledge-category" data-facts="australia-history"></div>
+            <div class="knowledge-category" data-facts="australia-politics"></div>
+            <div class="knowledge-category" data-facts="australia-culture"></div>
+            <div class="knowledge-category" data-facts="australia-food"></div>
+            <div class="knowledge-category" data-facts="australia-people"></div>
+            <div class="holiday-calendar" id="calendar-australia"></div>
+        </div>
+    </section>
+    <!-- ===== СТРАНА: НОВАЯ ЗЕЛАНДИЯ ===== -->
+    <section id="newzealand" class="country-page">
+        <div class="container">
+            <div class="country-header">
+                <h2> <span class="lang-en-only">New Zealand</span><span class="lang-ru-only">Новая Зеландия</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="symbols-section">
+                <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
+                <div class="symbols-grid">
+                    <div class="symbol-card"><img src="https://flagcdn.com/w640/nz.png" style="height:80px;" /><h4><span class="lang-en-only">Flag</span><span class="lang-ru-only">Флаг</span></h4><p><span class="lang-en-only">Southern Cross, British canton.</span><span class="lang-ru-only">Южный Крест, британский кантон.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🐦</span><h4><span class="lang-en-only">Kiwi</span><span class="lang-ru-only">Киви</span></h4><p><span class="lang-en-only">Flightless national emblem.</span><span class="lang-ru-only">Нелетающая национальная эмблема.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌿</span><h4><span class="lang-en-only">Silver Fern</span><span class="lang-ru-only">Серебряный папоротник</span></h4><p><span class="lang-en-only">Māori symbol of strength.</span><span class="lang-ru-only">Символ силы маори.</span></p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
+                <div class="sights-grid">
+                    <div class="sight-card"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Milford_Sound_%28New_Zealand%29.JPG" /><div class="caption"><span class="lang-en-only">Milford Sound</span><span class="lang-ru-only">Милфорд-Саунд</span></div></div>
+                    <div class="sight-card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Aoraki-Mount_Cook_from_Hooker_Valley.jpg/1280px-Aoraki-Mount_Cook_from_Hooker_Valley.jpg" /><div class="caption"><span class="lang-en-only">Mount Cook</span><span class="lang-ru-only">Гора Кука</span></div></div>
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/i?id=bf69190e484d20bcf58b7c189cf2beb7_l-3374823-images-thumbs&n=13" /><div class="caption"><span class="lang-en-only">Hobbiton</span><span class="lang-ru-only">Хоббитон</span></div></div>
+                </div>
+            </div>
+            <div class="knowledge-category" data-facts="nz-geo"></div>
+            <div class="knowledge-category" data-facts="nz-history"></div>
+            <div class="knowledge-category" data-facts="nz-politics"></div>
+            <div class="knowledge-category" data-facts="nz-culture"></div>
+            <div class="knowledge-category" data-facts="nz-food"></div>
+            <div class="knowledge-category" data-facts="nz-people"></div>
+            <div class="holiday-calendar" id="calendar-newzealand"></div>
+        </div>
+    </section>
+    <!-- ===== СТРАНА: КАНАДА ===== -->
+    <section id="canada" class="country-page">
+        <div class="container">
+            <div class="country-header">
+                <h2><span class="lang-en-only">Canada</span><span class="lang-ru-only">Канада</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="symbols-section">
+                <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
+                <div class="symbols-grid">
+                    <div class="symbol-card"><img src="https://flagcdn.com/w640/ca.png" style="height:80px;" /><h4><span class="lang-en-only">Maple Leaf</span><span class="lang-ru-only">Кленовый лист</span></h4><p><span class="lang-en-only">Unity and tolerance since 1965.</span><span class="lang-ru-only">Единство и толерантность с 1965 года.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🦫</span><h4><span class="lang-en-only">Beaver</span><span class="lang-ru-only">Бобр</span></h4><p><span class="lang-en-only">Symbol of diligence.</span><span class="lang-ru-only">Символ трудолюбия.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🍁</span><h4><span class="lang-en-only">Maple Syrup</span><span class="lang-ru-only">Кленовый сироп</span></h4><p><span class="lang-en-only">70% of world production.</span><span class="lang-ru-only">70% мирового производства.</span></p></div>
+                </div>
+                <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
+                <div class="sights-grid">
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/i?id=5e880d9476c993d07acb5fcd852cc128_l-4320611-images-thumbs&n=13" /><div class="caption"><span class="lang-en-only">Niagara Falls</span><span class="lang-ru-only">Ниагарский водопад</span></div></div>
+                    <div class="sight-card"><img src="https://avatars.mds.yandex.net/i?id=45eaede66f936b858f157a23d6cb4346_l-4893378-images-thumbs&n=13" /><div class="caption"><span class="lang-en-only">CN Tower</span><span class="lang-ru-only">Си-Эн Тауэр</span></div></div>
+                    <div class="sight-card"><img src="https://res.klook.com/image/upload/w_750,h_469,c_fill,q_85/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/ewqiwdzggmhfvrqrqvpr.jpg" /><div class="caption"><span class="lang-en-only">Lake Louise</span><span class="lang-ru-only">Озеро Луиза</span></div></div>
+                </div>
+            </div>
+            <div class="knowledge-category" data-facts="canada-geo"></div>
+            <div class="knowledge-category" data-facts="canada-history"></div>
+            <div class="knowledge-category" data-facts="canada-economy"></div>
+            <div class="knowledge-category" data-facts="canada-culture"></div>
+            <div class="knowledge-category" data-facts="canada-food"></div>
+            <div class="knowledge-category" data-facts="canada-people"></div>
+            <div class="holiday-calendar" id="calendar-canada"></div>
+        </div>
+    </section>
+    <!-- ===== ТЕСТ ===== -->
+    <section id="vpr-quiz" class="country-page" style="background-color:#f1f5f9;">
+        <div class="container">
+            <div class="country-header">
+                <h2>📝 <span class="lang-en-only">Country Studies Quiz</span><span class="lang-ru-only">Страноведение: тест</span></h2>
+                <span class="back-to-top" data-go-home>↑ <span class="lang-en-only">Back</span><span class="lang-ru-only">На главную</span></span>
+            </div>
+            <div class="quiz-container">
+                <div id="quiz-block">
+                    <div class="quiz-q-title" id="q-text">Loading...</div>
+                    <div class="quiz-options" id="options-block"></div>
+                    <div class="quiz-explain" id="explain-block"></div>
+                    <button class="next-btn" id="quiz-next-btn" onclick="nextQuestion()">Next</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <button id="scrollToTopBtn" aria-label="Scroll to top">↑</button>
+    <script>
+        // =================================================================
+        // 1. ДАННЫЕ ФАКТОВ (двуязычные)
+        // =================================================================
+        const FACTS_DATA = {
+            // ---- США: ГЕОГРАФИЯ (начинается со столицы и штатов) ----
+            'usa-geo': {
+                title: { en: '🗺️ Geography & Administration', ru: '🗺️ География и административное устройство' },
+                facts: [
+                    { en: 'Capital – Washington, D.C. (District of Columbia).', ru: 'Столица – Вашингтон (округ Колумбия).' },
+                    { en: 'List of all 50 states and their capitals: Alabama (Montgomery), Alaska (Juneau), Arizona (Phoenix), Arkansas (Little Rock), California (Sacramento), Colorado (Denver), Connecticut (Hartford), Delaware (Dover), Florida (Tallahassee), Georgia (Atlanta), Hawaii (Honolulu), Idaho (Boise), Illinois (Springfield), Indiana (Indianapolis), Iowa (Des Moines), Kansas (Topeka), Kentucky (Frankfort), Louisiana (Baton Rouge), Maine (Augusta), Maryland (Annapolis), Massachusetts (Boston), Michigan (Lansing), Minnesota (St. Paul), Mississippi (Jackson), Missouri (Jefferson City), Montana (Helena), Nebraska (Lincoln), Nevada (Carson City), New Hampshire (Concord), New Jersey (Trenton), New Mexico (Santa Fe), New York (Albany), North Carolina (Raleigh), North Dakota (Bismarck), Ohio (Columbus), Oklahoma (Oklahoma City), Oregon (Salem), Pennsylvania (Harrisburg), Rhode Island (Providence), South Carolina (Columbia), South Dakota (Pierre), Tennessee (Nashville), Texas (Austin), Utah (Salt Lake City), Vermont (Montpelier), Virginia (Richmond), Washington (Olympia), West Virginia (Charleston), Wisconsin (Madison), Wyoming (Cheyenne).',
+                        ru: 'Список всех 50 штатов и их столиц: Алабама (Монтгомери), Аляска (Джуно), Аризона (Финикс), Арканзас (Литл-Рок), Калифорния (Сакраменто), Колорадо (Денвер), Коннектикут (Хартфорд), Делавэр (Довер), Флорида (Таллахасси), Джорджия (Атланта), Гавайи (Гонолулу), Айдахо (Бойсе), Иллинойс (Спрингфилд), Индиана (Индианаполис), Айова (Де-Мойн), Канзас (Топика), Кентукки (Франкфорт), Луизиана (Батон-Руж), Мэн (Огаста), Мэриленд (Аннаполис), Массачусетс (Бостон), Мичиган (Лансинг), Миннесота (Сент-Пол), Миссисипи (Джексон), Миссури (Джефферсон-Сити), Монтана (Хелена), Небраска (Линкольн), Невада (Карсон-Сити), Нью-Гэмпшир (Конкорд), Нью-Джерси (Трентон), Нью-Мексико (Санта-Фе), Нью-Йорк (Олбани), Северная Каролина (Роли), Северная Дакота (Бисмарк), Огайо (Колумбус), Оклахома (Оклахома-Сити), Орегон (Сейлем), Пенсильвания (Гаррисберг), Род-Айленд (Провиденс), Южная Каролина (Колумбия), Южная Дакота (Пирр), Теннесси (Нашвилл), Техас (Остин), Юта (Солт-Лейк-Сити), Вермонт (Монтпилиер), Вирджиния (Ричмонд), Вашингтон (Олимпия), Западная Вирджиния (Чарлстон), Висконсин (Мэдисон), Вайоминг (Шайенн).' },
+                    { en: 'The United States of America is a federal republic of 50 states and the District of Columbia.', ru: 'Соединённые Штаты Америки – федеративная республика из 50 штатов и округа Колумбия.' },
+                    { en: 'Largest state by area – Alaska, smallest – Rhode Island.', ru: 'Самый большой по площади штат – Аляска, самый маленький – Род-Айленд.' },
+                    // Далее природные объекты:
+                    { en: 'Mount Denali (6,190 m) – highest point in North America.', ru: 'Гора Денали (6190 м) – высочайшая точка Северной Америки.' },
+                    { en: 'The Great Lakes (Superior, Michigan, Huron, Erie, Ontario) form the world\'s largest freshwater system.', ru: 'Великие озёра (Верхнее, Мичиган, Гурон, Эри, Онтарио) образуют крупнейшую систему пресных озёр в мире.' },
+                    { en: 'The Mississippi-Missouri river system is one of the longest in the world (about 6,275 km).', ru: 'Речная система Миссисипи-Миссури – одна из длиннейших в мире (около 6275 км).' },
+                    { en: 'The Rocky Mountains run through the western part; the Appalachians are older mountains in the east.', ru: 'Скалистые горы тянутся через западную часть; Аппалачи – более древние горы на востоке.' },
+                    { en: 'The Great Plains are vast prairies, the agricultural heartland.', ru: 'Великие равнины – обширные прерии, сельскохозяйственное сердце страны.' },
+                    { en: 'Hawaii – the only state on Pacific islands, with active volcanoes.', ru: 'Гавайи – единственный штат на островах Тихого океана, с действующими вулканами.' },
+                    { en: 'Yellowstone (1872) – the world\'s first national park.', ru: 'Йеллоустон (1872) – первый национальный парк в мире.' },
+                    { en: 'The Grand Canyon was carved by the Colorado River over millions of years.', ru: 'Большой Каньон создан рекой Колорадо за миллионы лет.' },
+                    { en: 'The Appalachian Trail – the longest hiking trail in the world (about 3,500 km).', ru: 'Аппалачская тропа – длиннейший пешеходный маршрут в мире (около 3500 км).' },
+                    { en: 'Texas – second‑largest by area and population, energy hub.', ru: 'Техас – второй по площади и населению штат, центр энергетики.' },
+                    { en: 'Florida – peninsula with subtropical climate, popular for Disney World and Cape Canaveral.', ru: 'Флорида – полуостров с субтропическим климатом, известен Диснейуорлдом и мысом Канаверал.' },
+                    { en: 'Chicago – skyscraper city on Lake Michigan.', ru: 'Чикаго – город небоскрёбов на озере Мичиган.' },
+                    { en: 'Manhattan – world financial and cultural centre.', ru: 'Манхэттен – мировой финансовый и культурный центр.' },
+                    { en: 'Las Vegas – entertainment and gambling capital.', ru: 'Лас-Вегас – столица развлечений и игорного бизнеса.' },
+                    { en: '"Golden State" – California\'s nickname; "Big Apple" – New York City.', ru: '«Золотой штат» – прозвище Калифорнии; «Большое яблоко» – Нью-Йорк.' }
+                ]
+            },
+            // ---- США: ИСТОРИЯ ----
+            'usa-history': {
+                title: { en: '📜 History & Political System', ru: '📜 История и политическая система' },
+                facts: [
+                    { en: 'The Declaration of Independence was adopted on 4 July 1776 in Philadelphia.', ru: 'Декларация независимости принята 4 июля 1776 года в Филадельфии.' },
+                    { en: 'The US Constitution (1787) is the oldest written constitution still in force.', ru: 'Конституция Соединённых Штатов (1787) – старейшая действующая писаная конституция.' },
+                    { en: 'The Bill of Rights includes the first 10 amendments.', ru: 'Билль о правах включает первые 10 поправок.' },
+                    { en: 'George Washington – first US president.', ru: 'Джордж Вашингтон – первый президент Соединённых Штатов.' },
+                    { en: 'The Civil War (1861–1865) was fought between North and South.', ru: 'Гражданская война (1861–1865) между Севером и Югом.' },
+                    { en: 'Abraham Lincoln abolished slavery.', ru: 'Авраам Линкольн отменил рабство.' },
+                    { en: 'The United States entered WWI in 1917.', ru: 'Соединённые Штаты вступили в Первую мировую войну в 1917 году.' },
+                    { en: 'The Great Depression began with the stock market crash of 1929.', ru: 'Великая депрессия началась с краха фондового рынка в 1929 году.' },
+                    { en: 'Franklin D. Roosevelt – the only president elected to four terms.', ru: 'Франклин Д. Рузвельт – единственный президент, избиравшийся на 4 срока.' },
+                    { en: 'Pearl Harbor (1941) led to US entry into WWII.', ru: 'Перл-Харбор (1941) – вступление во Вторую мировую.' },
+                    { en: 'The Cold War – geopolitical rivalry between the United States and the USSR.', ru: 'Холодная война – противостояние Соединённых Штатов и СССР.' },
+                    { en: 'Watergate scandal led to the only presidential resignation (R. Nixon).', ru: 'Уотергейтский скандал – единственная отставка президента (Р. Никсон).' },
+                    { en: 'The US president is elected by the Electoral College.', ru: 'Президент избирается коллегией выборщиков.' },
+                    { en: 'Congress consists of the House of Representatives and the Senate.', ru: 'Конгресс состоит из Палаты представителей и Сената.' },
+                    { en: 'The Supreme Court has 9 lifetime‑appointed justices.', ru: 'Верховный суд состоит из 9 пожизненно назначаемых судей.' },
+                    { en: '"Checks and balances" are the foundation of governance.', ru: '«Сдержки и противовесы» – основа системы управления.' },
+                    { en: 'The United States has a two‑party system (Democrats and Republicans).', ru: 'Соединённые Штаты – двухпартийная система (демократы и республиканцы).' },
+                    { en: 'The First Amendment guarantees freedom of speech, religion and the press.', ru: 'Первая поправка гарантирует свободу слова, религии и прессы.' },
+                    { en: 'The Second Amendment regulates gun rights.', ru: 'Вторая поправка регулирует право на оружие.' },
+                    { en: 'Federalism gives states significant legislative autonomy.', ru: 'Федерализм даёт штатам значительную автономию.' }
+                ]
+            },
+            // ---- США: ЛЮДИ ----
+            'usa-people': {
+                title: { en: '🎨 Famous People & Culture', ru: '🎨 Известные личности и культура' },
+                facts: [
+                    { en: 'Mark Twain – "father of American literature".', ru: 'Марк Твен – «отец американской литературы».' },
+                    { en: 'Edgar Allan Poe – founder of the modern detective genre.', ru: 'Эдгар Аллан По – основатель жанра современного детектива.' },
+                    { en: 'Ernest Hemingway – master of the "telegraphic" style.', ru: 'Эрнест Хемингуэй – мастер краткого стиля.' },
+                    { en: 'F. Scott Fitzgerald – chronicler of the "Jazz Age".', ru: 'Фрэнсис Скотт Фицджеральд – летописец «века джаза».' },
+                    { en: 'Harper Lee – author of "To Kill a Mockingbird".', ru: 'Харпер Ли – автор «Убить пересмешника».' },
+                    { en: 'Hollywood – the world capital of the film industry.', ru: 'Голливуд – мировая столица киноиндустрии.' },
+                    { en: 'Broadway – the centre of US theatre.', ru: 'Бродвей – центр театрального искусства Соединённых Штатов.' },
+                    { en: 'Jazz (New Orleans) and blues – America\'s greatest contribution to world music.', ru: 'Джаз (Новый Орлеан) и блюз – величайший вклад Соединённых Штатов в мировую музыку.' },
+                    { en: 'Rock and roll originated in the United States in the 1950s.', ru: 'Рок-н-ролл зародился в Соединённых Штатах в 1950-х годах.' },
+                    { en: '"American Dream" – success through hard work.', ru: '«Американская мечта» – успех через трудолюбие.' },
+                    { en: 'Statue of Liberty – a gift from France in 1886.', ru: 'Статуя Свободы – подарок Франции в 1886 году.' },
+                    { en: 'Smithsonian Institution – the world\'s largest museum complex.', ru: 'Смитсоновский институт – крупнейший в мире комплекс музеев.' },
+                    { en: 'Walt Disney – creator of American animation.', ru: 'Уолт Дисней – создатель американской мультипликации.' },
+                    { en: 'Hollywood Walk of Fame – a symbol of the entertainment industry.', ru: 'Голливудская «Аллея славы» – символ индустрии развлечений.' },
+                    { en: 'Lincoln Center – a major venue for classical arts.', ru: 'Линкольн-центр – важная площадка классического искусства.' },
+                    { en: '<strong>George Washington</strong> – first US president. On the $1 bill.<br><img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Portrait_of_George_Washington-transparent.png" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Джордж Вашингтон</strong> – первый президент Соединённых Штатов. На 1-долларовой банкноте.<br><img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Portrait_of_George_Washington-transparent.png" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Abraham Lincoln</strong> – 16th president, abolished slavery. On the $5 bill.<br><img src="https://avatars.mds.yandex.net/i?id=c0d4becfc6da2025dec5e9fd99537e73_l-5137607-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Авраам Линкольн</strong> – 16-й президент, отменил рабство. На 5-долларовой банкноте.<br><img src="https://avatars.mds.yandex.net/i?id=c0d4becfc6da2025dec5e9fd99537e73_l-5137607-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Martin Luther King Jr.</strong> – civil rights leader, Nobel Peace Prize.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Martin_Luther_King%2C_Jr..jpg/960px-Martin_Luther_King%2C_Jr..jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Мартин Лютер Кинг-младший</strong> – лидер движения за гражданские права, лауреат Нобелевской премии мира.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Martin_Luther_King%2C_Jr..jpg/960px-Martin_Luther_King%2C_Jr..jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Benjamin Franklin</strong> – scientist, inventor, Founding Father.<br><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Benjamin_Franklin_1706-1790.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Бенджамин Франклин</strong> – учёный, изобретатель, один из отцов-основателей.<br><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Benjamin_Franklin_1706-1790.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Thomas Edison</strong> – inventor of the phonograph and light bulb.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Thomas_Edison2.jpg/960px-Thomas_Edison2.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Томас Эдисон</strong> – изобретатель фонографа и лампы накаливания.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Thomas_Edison2.jpg/960px-Thomas_Edison2.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Elvis Presley</strong> – "King of Rock and Roll".<br><img src="https://avatars.mds.yandex.net/i?id=2cc13edbee71f06aa72b9c29863b98c8_l-4451037-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Элвис Пресли</strong> – «король рок-н-ролла».<br><img src="https://avatars.mds.yandex.net/i?id=2cc13edbee71f06aa72b9c29863b98c8_l-4451037-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Michael Jackson</strong> – "King of Pop".<br><img src="https://avatars.mds.yandex.net/i?id=c2b87a4d6a2c29be7303c7d9e1796a67_l-5086874-images-thumbs&ref=rim&n=13&w=1417&h=1417" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Майкл Джексон</strong> – «король поп-музыки».<br><img src="https://avatars.mds.yandex.net/i?id=c2b87a4d6a2c29be7303c7d9e1796a67_l-5086874-images-thumbs&ref=rim&n=13&w=1417&h=1417" style="width:80px; border-radius:50%; margin-top:8px;">' }
+                ]
+            },
+            // ---- США: ОБЩЕСТВО ----
+            'usa-society': {
+                title: { en: '🏛️ Society & Traditions', ru: '🏛️ Общество и традиции' },
+                facts: [
+                    { en: 'Thanksgiving – the main family holiday, fourth Thursday of November.', ru: 'День Благодарения – главный семейный праздник, четвёртый четверг ноября.' },
+                    { en: 'Independence Day (July 4) – fireworks and parades.', ru: 'День Независимости (4 июля) – фейерверки и парады.' },
+                    { en: 'Memorial Day and Veterans Day – public holidays.', ru: 'День памяти и День ветеранов – государственные праздники.' },
+                    { en: 'American football – the most popular sport.', ru: 'Американский футбол – самый популярный вид спорта.' },
+                    { en: 'Baseball is called the "national pastime".', ru: 'Бейсбол называют «национальным времяпрепровождением».' },
+                    { en: 'MLB, NBA, NFL – the major sports leagues.', ru: 'MLB, NBA, NFL – главные спортивные лиги.' },
+                    { en: 'Ivy League – 8 elite private universities in the Northeast.', ru: 'Лига плюща – 8 элитарных частных университетов на северо-востоке.' },
+                    { en: 'The United States has the world\'s most developed higher education system.', ru: 'Соединённые Штаты имеют самую развитую систему высшего образования в мире.' },
+                    { en: 'American culture is a "melting pot".', ru: 'Американская культура – «плавильный котёл».' },
+                    { en: 'NASA – the agency responsible for the space programme.', ru: 'НАСА – агентство, ответственное за космическую программу.' },
+                    { en: 'Silicon Valley – global centre of IT and innovation.', ru: 'Силиконовая долина – глобальный центр инноваций и IT-технологий.' },
+                    { en: 'Global corporations (Google, Apple, Microsoft) drive the economy.', ru: 'Глобальные корпорации (Google, Apple, Microsoft) – двигатели экономики.' },
+                    { en: 'Individualism and "self‑made man" – key values.', ru: 'Индивидуализм и «self-made man» – ключевые ценности.' },
+                    { en: 'The US flag has 13 stripes and 50 stars.', ru: 'Флаг Соединённых Штатов – 13 полос и 50 звёзд.' },
+                    { en: 'The US dollar is the world\'s main reserve currency.', ru: 'Доллар Соединённых Штатов – главная резервная валюта мира.' },
+                    { en: 'The FBI investigates federal crimes.', ru: 'ФБР расследует федеральные преступления.' },
+                    { en: 'The CIA – US foreign intelligence.', ru: 'ЦРУ – внешняя разведка Соединённых Штатов.' },
+                    { en: 'Charity – an important part of American civic culture.', ru: 'Благотворительность – важная часть гражданской культуры.' },
+                    { en: 'The Wild West – an important historical myth.', ru: 'Дикий Запад – важный исторический миф.' },
+                    { en: 'Ellis Island – the main gateway for immigrants.', ru: 'Эллис-Айленд – главные ворота для иммигрантов.' },
+                    { en: 'Fast food culture originated in the United States (McDonald\'s).', ru: 'Культура фаст-фуда зародилась в Соединённых Штатах (McDonald\'s).' },
+                    { en: 'American English – the main variant of the language.', ru: 'Американский английский – основной вариант языка.' },
+                    { en: 'Immigration is the foundation of nation‑building.', ru: 'Иммиграция – основа формирования нации.' }
+                ]
+            },
+            // ---- США: ЕДА И ПРАЗДНИКИ ----
+            'usa-food': {
+                title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
+                facts: [
+                    { en: 'New Year\'s Day – January 1. Traditions: champagne, black‑eyed peas for luck.', ru: 'Новый год – 1 января. Традиции: шампанское, чёрные бобы на удачу.' },
+                    { en: 'Martin Luther King Jr. Day – third Monday of January (around Jan 20).', ru: 'День Мартина Лютера Кинга – третий понедельник января (около 20 января).' },
+                    { en: 'Presidents\' Day – third Monday of February (around Feb 17).', ru: 'День президентов – третий понедельник февраля (около 17 февраля).' },
+                    { en: 'St. Patrick\'s Day – March 17. Green beer and corned beef with cabbage.', ru: 'День Святого Патрика – 17 марта. Зелёное пиво, корнед-биф с капустой.' },
+                    { en: 'Easter (date varies) – chocolate eggs, Easter bunny, family dinner with ham or lamb.', ru: 'Пасха (дата меняется) – шоколадные яйца, пасхальный кролик, семейный обед с ветчиной или бараниной.' },
+                    { en: 'Memorial Day – last Monday of May (around May 25). Start of summer, barbecues.', ru: 'День памяти – последний понедельник мая (около 25 мая). Начало лета, барбекю.' },
+                    { en: 'Flag Day – June 14. Patriotic picnics.', ru: 'День флага – 14 июня. Патриотические пикники.' },
+                    { en: 'Juneteenth – June 19. Commemorates the end of slavery.', ru: 'Девятнадцатое июня – 19 июня. Означает конец рабства.' },
+                    { en: 'Independence Day – July 4. Fireworks, parades, hot dogs and burgers.', ru: 'День независимости – 4 июля. Фейерверки, парады, хот-доги и гамбургеры.' },
+                    { en: 'Labour Day – first Monday of September (around Sep 6). Barbecues, unofficial end of summer.', ru: 'День труда – первый понедельник сентября (около 6 сентября). Барбекю, неофициальный конец лета.' },
+                    { en: 'Columbus Day – second Monday of October (around Oct 12). Parades; in some states Indigenous Peoples\' Day.', ru: 'День Колумба – второй понедельник октября (около 12 октября). Парады; в некоторых штатах – День коренных народов.' },
+                    { en: 'Halloween – October 31. Pumpkin carving, sweets, costume parties.', ru: 'Хэллоуин – 31 октября. Вырезание тыкв, сладости, костюмированные вечеринки.' },
+                    { en: 'Veterans Day – November 11. Memorial ceremonies, free meals for veterans.', ru: 'День ветеранов – 11 ноября. Церемонии, бесплатные обеды для ветеранов.' },
+                    { en: 'Thanksgiving – fourth Thursday of November (around Nov 26). Turkey, mashed potatoes, pumpkin pie, Macy\'s parade.', ru: 'День благодарения – четвёртый четверг ноября (около 26 ноября). Индейка, картофельное пюре, тыквенный пирог, парад Мэйси.' },
+                    { en: 'Christmas – December 25. Tree, gifts, turkey or ham dinner.', ru: 'Рождество – 25 декабря. Ёлка, подарки, обед из индейки или ветчины.' },
+                    { en: 'New York‑style cheesecake – a famous dessert.', ru: 'Чизкейк в нью-йоркском стиле – известный десерт.' },
+                    { en: 'Cranberry sauce is a must for Thanksgiving.', ru: 'Клюквенный соус – обязательный атрибут Дня благодарения.' },
+                    { en: 'Mac and cheese – popular in the southern states.', ru: 'В южных штатах популярен «мак-н-чиз».' },
+                    { en: 'Apple pie is considered a symbol of American cuisine.', ru: 'Яблочный пирог – символ американской кухни.' },
+                    { en: 'Philly cheesesteak – a cult sandwich from Philadelphia.', ru: 'Филадельфийский чизстейк – культовый сэндвич из Филадельфии.' },
+                    { en: 'Buffalo wings – an appetiser invented in 1964 in Buffalo, New York.', ru: 'Баффало-котлеты – закуска, изобретённая в 1964 году в Буффало.' },
+                    { en: 'Super Bowl (first Sunday of February) – chicken wings and pizza.', ru: 'Супербоул (первое воскресенье февраля) – куриные крылышки и пицца.' }
+                ]
+            },
+            // ---- ВЕЛИКОБРИТАНИЯ: ГЕОГРАФИЯ ----
+            'uk-geo': {
+                title: { en: '🗺️ Geography & Administration', ru: '🗺️ География и административное устройство' },
+                facts: [
+                    { en: 'Capital – London (on the River Thames).', ru: 'Столица – Лондон (на реке Темза).' },
+                    { en: 'The United Kingdom consists of four constituent countries with their capitals: England (London), Scotland (Edinburgh), Wales (Cardiff), Northern Ireland (Belfast).',
+                        ru: 'Соединённое Королевство состоит из четырёх стран-участниц со столицами: Англия (Лондон), Шотландия (Эдинбург), Уэльс (Кардифф), Северная Ирландия (Белфаст).' },
+                    { en: 'The United Kingdom of Great Britain and Northern Ireland consists of four parts: England, Scotland, Wales and Northern Ireland.', ru: 'Соединённое Королевство Великобритании и Северной Ирландии состоит из четырёх частей: Англия, Шотландия, Уэльс и Северная Ирландия.' },
+                    { en: 'Ben Nevis – highest point in the British Isles (1,345 m, Scotland).', ru: 'Бен-Невис – высочайшая точка Британских островов (1345 м, Шотландия).' },
+                    { en: 'The English Channel (La Manche) separates Britain from France.', ru: 'Ла-Манш – пролив, отделяющий Британию от Франции.' },
+                    { en: 'The Lake District – England\'s largest national park, home of the Romantic poets.', ru: 'Озерный край – крупнейший национальный парк Англии, родина поэтов-романтиков.' },
+                    { en: 'The Pennines are often called the "backbone of England".', ru: 'Пеннинские горы – «хребет Англии».' },
+                    { en: 'The Prime Meridian runs through Greenwich (London).', ru: 'Нулевой меридиан – через Гринвич (Лондон).' },
+                    { en: 'Edinburgh – capital of Scotland, famous for its castle and arts festival.', ru: 'Эдинбург – столица Шотландии, знаменита замком и фестивалем искусств.' },
+                    { en: 'Cardiff – capital and largest city of Wales.', ru: 'Кардифф – столица и крупнейший город Уэльса.' },
+                    { en: 'Belfast – capital of Northern Ireland.', ru: 'Белфаст – столица Северной Ирландии.' },
+                    { en: 'Snowdonia – a mountain range in north‑west Wales.', ru: 'Сноудония – горный массив на северо-западе Уэльса.' },
+                    { en: 'The British Isles include Great Britain, Ireland and thousands of smaller islands.', ru: 'Британские острова включают Великобританию, Ирландию и тысячи малых островов.' },
+                    { en: 'The River Severn – the longest river in the UK (354 km).', ru: 'Река Северн – самая длинная река в Соединённом Королевстве (354 км).' },
+                    { en: 'Loch Ness – famous for its depth and the legend of the monster.', ru: 'Лох-Несс – знаменит глубиной и легендой о чудовище.' },
+                    { en: 'The Union Jack combines the crosses of St George, St Andrew and St Patrick.', ru: 'Юнион Джек сочетает кресты святых Георгия, Андрея и Патрика.' },
+                    { en: 'Rose – symbol of England, thistle – Scotland, daffodil/leek – Wales, shamrock – Northern Ireland.', ru: 'Роза – символ Англии, чертополох – Шотландии, нарцисс/лук-порей – Уэльса, клевер – Северной Ирландии.' },
+                    { en: '33 UK sites are on the UNESCO World Heritage list.', ru: '33 объекта в Соединённом Королевстве – в списке ЮНЕСКО.' }
+                ]
+            },
+            // ---- ВЕЛИКОБРИТАНИЯ: ИСТОРИЯ ----
+            'uk-history': {
+                title: { en: '📜 History & Politics', ru: '📜 История и политика' },
+                facts: [
+                    { en: 'The United Kingdom is a constitutional monarchy without a single codified constitution.', ru: 'Соединённое Королевство – конституционная монархия без единого кодифицированного документа.' },
+                    { en: 'The Battle of Hastings (1066) marked the Norman conquest.', ru: 'Битва при Гастингсе (1066) – начало нормандского завоевания.' },
+                    { en: 'Magna Carta (1215) – the foundation of constitutional law.', ru: 'Великая хартия вольностей (1215) – основа конституционного права.' },
+                    { en: 'The Act of Supremacy (1534) made the king head of the Church.', ru: 'Акт о супрематии (1534) – король главой церкви.' },
+                    { en: 'Elizabeth I defeated the Spanish Armada (1588).', ru: 'Елизавета I разгромила испанскую Армаду (1588).' },
+                    { en: 'Charles I was executed during the English Civil War (1649).', ru: 'Карл I казнён в ходе Английской гражданской войны (1649).' },
+                    { en: 'The Glorious Revolution (1688) established Parliament\'s authority.', ru: 'Славная революция (1688) – власть Парламента над Короной.' },
+                    { en: 'The Act of Union (1707) united the English and Scottish parliaments.', ru: 'Акт об унии (1707) – объединение парламентов Англии и Шотландии.' },
+                    { en: 'The Victorian era (1837–1901) – colonial expansion and industrial boom.', ru: 'Викторианская эпоха (1837–1901) – колониальное расширение и промышленный бум.' },
+                    { en: 'Winston Churchill led the government during WWII.', ru: 'Уинстон Черчилль – правительство во время Второй мировой.' },
+                    { en: 'Margaret Thatcher (1979–1990) – the first female Prime Minister.', ru: 'Маргарет Тэтчер (1979–1990) – первая женщина-премьер-министр.' },
+                    { en: '2020 – the United Kingdom officially left the EU (Brexit).', ru: '2020 год – официальный выход из ЕС (Brexit).' },
+                    { en: 'The House of Commons is the elected body with real legislative power.', ru: 'Палата общин – выборный орган с реальной законодательной властью.' },
+                    { en: 'The House of Lords is the upper chamber, members are appointed for life.', ru: 'Палата лордов – верхняя палата, члены назначаются пожизненно.' },
+                    { en: 'The Prime Minister lives at 10 Downing Street.', ru: 'Премьер-министр живёт на Даунинг-стрит, 10.' },
+                    { en: 'The electoral system is first‑past‑the‑post.', ru: 'Избирательная система – мажоритарная (First-past-the-post).' }
+                ]
+            },
+            // ---- ВЕЛИКОБРИТАНИЯ: СИМВОЛЫ ----
+            'uk-symbols': {
+                title: { en: '🎨 Symbols & National Culture', ru: '🎨 Символика и национальная культура' },
+                facts: [
+                    { en: 'NHS – the National Health Service, free public healthcare.', ru: 'NHS – Национальная служба здравоохранения, бесплатная медицина.' },
+                    { en: 'Oxbridge – collective name for Oxford and Cambridge universities.', ru: 'Oxbridge – собирательное название Оксфорда и Кембриджа.' },
+                    { en: 'Public schools in the United Kingdom are elite private schools (Eton, Harrow).', ru: 'Public schools в Британии – элитарные частные школы (Итон, Харроу).' },
+                    { en: 'The BBC operates under a Royal Charter.', ru: 'BBC – на основе Королевской хартии.' },
+                    { en: '"Black cab" – the classic London taxi.', ru: '«Черный кэб» – классическое лондонское такси.' },
+                    { en: '"The Tube" – the world\'s oldest underground railway.', ru: '«Труба» – старейшая в мире линия метрополитена.' },
+                    { en: 'Pub (Public House) – a traditional centre of social life.', ru: 'Паб – традиционный центр социальной жизни.' },
+                    { en: 'Afternoon tea – a cultural symbol of Britain.', ru: 'Afternoon tea – традиция, ставшая культурным символом Британии.' },
+                    { en: 'The Royal Guard wears bearskins.', ru: 'Королевская гвардия носит медвежьи шапки.' },
+                    { en: 'Cricket – a "gentleman\'s" sport.', ru: 'Крикет – «джентльменский» спорт.' },
+                    { en: 'Football – the most popular sport, the country of origin.', ru: 'Футбол – самый популярный спорт, страна-родоначальник.' },
+                    { en: 'Wimbledon – the oldest tennis tournament (since 1877).', ru: 'Уимблдон – старейший теннисный турнир (с 1877 года).' },
+                    { en: 'Welsh – a living Celtic language with official status in Wales.', ru: 'Валлийский – живой кельтский язык, имеет статус государственного в Уэльсе.' },
+                    { en: 'Gaelic is preserved in Scotland.', ru: 'Гэльский язык сохраняется в Шотландии.' },
+                    { en: 'National cuisine – fish and chips and the full English breakfast.', ru: 'Национальная кухня – фиш-энд-чипс и полный английский завтрак.' },
+                    { en: 'Buckingham Palace is the monarch\'s official London residence.', ru: 'Букингемский дворец – официальная резиденция монарха в Лондоне.' },
+                    { en: 'Westminster Abbey is the coronation site for all British monarchs.', ru: 'Вестминстерское аббатство – место коронации всех британских монархов.' },
+                    { en: 'Big Ben is the bell inside the Elizabeth Tower.', ru: 'Биг-Бен – это колокол внутри Елизаветинской башни.' },
+                    { en: 'Stonehenge is a Neolithic henge monument.', ru: 'Стоунхендж – неолитический объект типа «хендж».' },
+                    { en: 'Trooping the Colour – a parade for the monarch\'s birthday.', ru: '«Тропинг зе колор» – парад в честь дня рождения монарха.' },
+                    { en: 'Trafalgar Square – the site of Admiral Nelson\'s triumph.', ru: 'Трафальгарская площадь – место триумфа адмирала Нельсона.' },
+                    { en: 'Tower Bridge is a Victorian symbol of engineering.', ru: 'Тауэрский мост – викторианский символ инженерной мысли.' },
+                    { en: 'Canterbury Cathedral is the centre of the Anglican Church.', ru: 'Кентерберийский собор – центр англиканской церкви.' },
+                    { en: 'Tea is consumed in huge quantities (over 160 million cups a day).', ru: 'Чай – более 160 млн чашек в день.' }
+                ]
+            },
+            // ---- ВЕЛИКОБРИТАНИЯ: ЛЮДИ ----
+            'uk-people': {
+                title: { en: '⭐ Famous People', ru: '⭐ Известные личности' },
+                facts: [
+                    { en: '<strong>William Shakespeare</strong> – "The Bard of Avon".<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/960px-Shakespeare.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Уильям Шекспир</strong> – «Бард Эйвона».<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/960px-Shakespeare.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Isaac Newton</strong> – physicist, mathematician, astronomer.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Sir_Isaac_Newton_by_Sir_Godfrey_Kneller%2C_Bt.jpg/500px-Sir_Isaac_Newton_by_Sir_Godfrey_Kneller%2C_Bt.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Исаак Ньютон</strong> – физик, математик, астроном.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Sir_Isaac_Newton_by_Sir_Godfrey_Kneller%2C_Bt.jpg/500px-Sir_Isaac_Newton_by_Sir_Godfrey_Kneller%2C_Bt.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Charles Darwin</strong> – naturalist, author of "On the Origin of Species".<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Charles_Darwin_photograph_by_Julia_Margaret_Cameron%2C_1868.jpg/500px-Charles_Darwin_photograph_by_Julia_Margaret_Cameron%2C_1868.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Чарльз Дарвин</strong> – естествоиспытатель, автор «Происхождения видов».<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Charles_Darwin_photograph_by_Julia_Margaret_Cameron%2C_1868.jpg/500px-Charles_Darwin_photograph_by_Julia_Margaret_Cameron%2C_1868.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Winston Churchill</strong> – Prime Minister during WWII, Nobel Prize in Literature.<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Churchill_HU_90973.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Уинстон Черчилль</strong> – премьер-министр в годы Второй мировой, Нобелевская премия по литературе.<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Churchill_HU_90973.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>The Beatles</strong> – legendary rock band from Liverpool.<br><img src="https://avatars.mds.yandex.net/i?id=9ccafd0d004fff7dc39707bc8282a73d_l-10877238-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>The Beatles</strong> – легендарная группа из Ливерпуля.<br><img src="https://avatars.mds.yandex.net/i?id=9ccafd0d004fff7dc39707bc8282a73d_l-10877238-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Jane Austen</strong> – classic English writer.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Джейн_Остин.jpg/500px-Джейн_Остин.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Джейн Остин</strong> – классик английской литературы.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Джейн_Остин.jpg/500px-Джейн_Остин.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Charles Dickens</strong> – novelist, creator of "Oliver Twist".<br><img src="https://avatars.mds.yandex.net/i?id=8e2d3acdb09a267d2b31998783ce99ac_l-5338563-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Чарльз Диккенс</strong> – писатель-романист, создатель «Оливера Твиста».<br><img src="https://avatars.mds.yandex.net/i?id=8e2d3acdb09a267d2b31998783ce99ac_l-5338563-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>J.K. Rowling</strong> – author of the "Harry Potter" series.<br><img src="https://avatars.mds.yandex.net/get-entity_search/1974363/1264969817/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Джоан Роулинг</strong> – автор серии книг о Гарри Поттере.<br><img src="https://avatars.mds.yandex.net/get-entity_search/1974363/1264969817/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Stephen Hawking</strong> – theoretical physicist, author of "A Brief History of Time".<br><img src="https://i.bigenc.ru/resizer/resize?sign=7vI-Nnrv6R_OjghbRCllEw&filename=vault/d82968cf8d168b0e2c1f438053207b26.webp&width=1200" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Стивен Хокинг</strong> – физик-теоретик, автор «Краткой истории времени».<br><img src="https://i.bigenc.ru/resizer/resize?sign=7vI-Nnrv6R_OjghbRCllEw&filename=vault/d82968cf8d168b0e2c1f438053207b26.webp&width=1200" style="width:80px; border-radius:50%; margin-top:8px;">' }
+                ]
+            },
+            // ---- ВЕЛИКОБРИТАНИЯ: ЕДА И ПРАЗДНИКИ ----
+            'uk-food': {
+                title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
+                facts: [
+                    { en: 'New Year\'s Day – January 1. Parties, fireworks, "Auld Lang Syne".', ru: 'Новый год – 1 января. Вечеринки, фейерверки, «Auld Lang Syne».' },
+                    { en: 'St David\'s Day – March 1 (Wales). Daffodils, leek soup (cawl).', ru: 'День святого Давида – 1 марта (Уэльс). Нарциссы, суп из лука-порея (cawl).' },
+                    { en: 'St Patrick\'s Day – March 17 (Northern Ireland). Green clothing, Irish lamb stew.', ru: 'День святого Патрика – 17 марта (Северная Ирландия). Зелёная одежда, ирландское рагу с бараниной.' },
+                    { en: 'Good Friday (date varies) – traditional hot cross buns.', ru: 'Страстная пятница (дата меняется) – традиционные крестные булочки.' },
+                    { en: 'Easter Sunday (date varies) – chocolate eggs, family dinner of lamb or ham.', ru: 'Пасха (дата меняется) – шоколадные яйца, семейный обед из баранины или ветчины.' },
+                    { en: 'Easter Monday – egg rolling down hills.', ru: 'Пасхальный понедельник – катание яиц с холмов.' },
+                    { en: 'St George\'s Day – April 23 (England). Roast lamb and ale, raising of St George\'s cross.', ru: 'День святого Георгия – 23 апреля (Англия). Жареная баранина и эль, поднятие креста св. Георгия.' },
+                    { en: 'May Day – first Monday of May. Ancient spring festival, maypole dancing.', ru: 'Майский день – первый понедельник мая. Древний праздник весны, танцы вокруг майского дерева.' },
+                    { en: 'Spring Bank Holiday – last Monday of May. Picnics and garden parties.', ru: 'Весенний банковский выходной – последний понедельник мая. Пикники и садовые вечеринки.' },
+                    { en: 'Queen\'s Official Birthday – second Saturday of June. Trooping the Colour parade.', ru: 'День рождения королевы – вторая суббота июня. Парад Trooping the Colour.' },
+                    { en: 'Summer Bank Holiday – last Monday of August. Notting Hill Carnival, barbecues.', ru: 'Летний банковский выходной – последний понедельник августа. Карнавал Ноттинг-Хилл, барбекю.' },
+                    { en: 'Halloween – October 31. Pumpkin carving, sweets, parties.', ru: 'Хэллоуин – 31 октября. Вырезание тыкв, сладости, вечеринки.' },
+                    { en: 'Guy Fawkes Night – November 5. Fireworks, burning effigies, toffee apples.', ru: 'Ночь Гая Фокса – 5 ноября. Фейерверки, сжигание чучела, яблоки в карамели.' },
+                    { en: 'Remembrance Sunday – second Sunday of November. Memorial services with poppies.', ru: 'День перемирия – второе воскресенье ноября. Поминальные службы с маками.' },
+                    { en: 'St Andrew\'s Day – November 30 (Scotland). Haggis (sheep\'s stomach with oats).', ru: 'День святого Андрея – 30 ноября (Шотландия). Хаггис (бараний рубец с овсянкой).' },
+                    { en: 'Christmas – December 25. Turkey, Christmas pudding, King\'s speech.', ru: 'Рождество – 25 декабря. Индейка, рождественский пудинг, обращение короля.' },
+                    { en: 'Boxing Day – December 26. Sales, leftover cold meats and pies, sports events.', ru: 'День подарков – 26 декабря. Распродажи, остатки холодного мяса и пироги, спортивные мероприятия.' },
+                    { en: 'Scottish Hogmanay (December 31) – street parties, "first‑footing" tradition.', ru: 'Шотландский Хогманай (31 декабря) – уличные вечеринки, традиция «first-footing».' },
+                    { en: 'Full English breakfast – eggs, bacon, sausages, fried tomatoes, mushrooms, toast, beans.', ru: 'Английский завтрак – яйца, бекон, колбасы, жареные помидоры, грибы, тосты, бобы.' },
+                    { en: 'Shepherd\'s pie – lamb mince with mashed potato topping.', ru: 'Пастуший пирог – баранина с картофельным пюре.' },
+                    { en: 'Fish and chips – national dish, served with salt and vinegar.', ru: 'Рыба с жареной картошкой – национальное блюдо, с солью и уксусом.' },
+                    { en: 'Trifle – dessert with sponge, fruit, custard and whipped cream.', ru: 'Трайфл – десерт из бисквита, фруктов, заварного крема и взбитых сливок.' },
+                    { en: 'Mistletoe – a symbol of luck, under which it is customary to kiss at Christmas.', ru: 'Омела – символ удачи, под ней принято целоваться на Рождество.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: ГЕОГРАФИЯ ----
+            'australia-geo': {
+                title: { en: '🗺️ Geography & Nature', ru: '🗺️ География и природа' },
+                facts: [
+                    { en: 'Capital – Canberra (chosen as a compromise between Sydney and Melbourne).', ru: 'Столица – Канберра (выбрана как компромисс между Сиднеем и Мельбурном).' },
+                    { en: '6 states: New South Wales (Sydney), Victoria (Melbourne), Queensland (Brisbane), Western Australia (Perth), South Australia (Adelaide), Tasmania (Hobart).',
+                        ru: '6 штатов: Новый Южный Уэльс (Сидней), Виктория (Мельбурн), Квинсленд (Брисбен), Западная Австралия (Перт), Южная Австралия (Аделаида), Тасмания (Хобарт).' },
+                    { en: 'Two mainland territories: Northern Territory (Darwin), Australian Capital Territory (Canberra).', ru: 'Две основные территории: Северная территория (Дарвин), Австралийская столичная территория (Канберра).' },
+                    { en: 'External territories: Christmas Island, Cocos Islands, Norfolk Island, etc.', ru: 'Внешние территории: остров Рождества, Кокосовые острова, остров Норфолк и др.' },
+                    { en: 'Australia is the only continent that is also a country.', ru: 'Австралия – единственный континент, который одновременно является страной.' },
+                    { en: 'Mount Kosciuszko (2,228 m) – highest point on the mainland.', ru: 'Гора Косцюшко (2228 м) – высшая точка материка.' },
+                    { en: 'Lake Eyre (Kati‑Thanda) – lowest point (−15 m).', ru: 'Озеро Эйр – самая низкая точка (−15 м).' },
+                    { en: 'The Great Dividing Range is the third‑longest mountain chain in the world.', ru: 'Большой Водораздельный хребет – третья по длине горная цепь в мире.' },
+                    { en: 'The Great Barrier Reef – the largest living structure on Earth.', ru: 'Большой Барьерный риф – крупнейшая живая структура на Земле.' },
+                    { en: 'Australia is the driest inhabited continent.', ru: 'Австралия – самый сухой населённый континент.' },
+                    { en: 'The Outback covers vast arid interior areas.', ru: 'Аутбэк – огромные засушливые пространства.' },
+                    { en: 'Uluru – the world\'s largest monolith, sacred to the Anangu people.', ru: 'Улуру – крупнейший монолит, священное место народа Анангу.' },
+                    { en: 'Tasmania is separated from the mainland by Bass Strait.', ru: 'Остров Тасмания отделён Бассовым проливом.' },
+                    { en: 'The Murray‑Darling Basin – the country\'s most important agricultural region.', ru: 'Бассейн Муррей-Дарлинг – важнейший сельскохозяйственный регион.' },
+                    { en: 'Australia has over 10,000 beaches.', ru: 'В Австралии более 10 000 пляжей.' },
+                    { en: 'The Great Ocean Road – the world\'s largest war memorial.', ru: 'Великая океанская дорога – самый большой военный мемориал.' },
+                    { en: '80 % of Australian flora and fauna are endemic.', ru: '80 % флоры и фауны – эндемики.' },
+                    { en: 'The platypus and echidna are the only egg‑laying mammals in the world.', ru: 'Утконос и ехидна – единственные в мире яйцекладущие млекопитающие.' },
+                    { en: 'There are no active volcanoes in Australia.', ru: 'В Австралии нет действующих вулканов.' },
+                    { en: '90 % of the population lives in coastal areas.', ru: '90 % населения живёт в прибрежных районах.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: ИСТОРИЯ ----
+            'australia-history': {
+                title: { en: '📜 History', ru: '📜 История' },
+                facts: [
+                    { en: 'Australia is home to the world\'s oldest continuous culture (Aboriginal – about 65,000 years).', ru: 'Австралия – дом для старейшей непрерывной культуры (аборигены – около 65 000 лет).' },
+                    { en: 'Captain James Cook claimed the east coast for Britain in 1770.', ru: 'Капитан Джеймс Кук объявил восточное побережье владением Британии в 1770 году.' },
+                    { en: 'The First Fleet arrived in 1788, starting its history as a penal colony.', ru: 'Первый флот прибыл в 1788 году, положив начало истории каторжной колонии.' },
+                    { en: 'Eureka Rebellion (1854) – symbol of the struggle for democratic rights.', ru: 'Эврикское восстание (1854) – символ борьбы за демократические права.' },
+                    { en: 'Australia became a federation (Commonwealth) on 1 January 1901.', ru: 'Австралия стала федерацией 1 января 1901 года.' },
+                    { en: 'Australia was the second country to give women the right to vote (1902).', ru: 'Австралия стала второй страной, предоставившей женщинам право голоса (1902).' },
+                    { en: 'The "White Australia" policy restricted non‑European immigration until the mid‑20th century.', ru: 'Политика «Белой Австралии» ограничивала иммиграцию неевропейцев до середины XX века.' },
+                    { en: 'Australia was a founding member of the UN.', ru: 'Австралия была страной-основателем ООН.' },
+                    { en: 'The ANZAC legend (1915) is central to Australian national identity.', ru: 'Легенда АНЗАК (1915) является центральной для австралийской идентичности.' },
+                    { en: 'Australia participated in both world wars and the Vietnam War.', ru: 'Австралия участвовала в обеих мировых войнах и войне во Вьетнаме.' },
+                    { en: 'The Mabo decision (1992) overturned the concept of *terra nullius*.', ru: 'Решение по делу Мабо (1992) опровергло концепцию *terra nullius*.' },
+                    { en: 'Australia is a constitutional monarchy, head of state – British monarch.', ru: 'Австралия – конституционная монархия, глава государства – британский монарх.' },
+                    { en: 'The 1967 referendum allowed Indigenous people to be counted in the census.', ru: 'Референдум 1967 года позволил учитывать коренное население в переписи.' },
+                    { en: '"Stolen Generations" – forced removal of Aboriginal children from their families.', ru: '«Украденные поколения» – насильственное изъятие детей аборигенов из семей.' },
+                    { en: 'The secret ballot was first used in Victoria in 1856.', ru: 'Тайное голосование впервые применено в Виктории в 1856 году.' },
+                    { en: 'The 8‑hour working day was first legislated in Australia in 1856.', ru: '8-часовой рабочий день впервые законодательно закреплён в Австралии в 1856 году.' },
+                    { en: 'Ned Kelly – Australia\'s most famous bushranger.', ru: 'Нед Келли – самый известный австралийский бушрейнджер.' },
+                    { en: '"Advance Australia Fair" has been the national anthem since 1984.', ru: '«Advance Australia Fair» – национальный гимн с 1984 года.' },
+                    { en: 'The coat of arms features a kangaroo and an emu, as they cannot walk backwards.', ru: 'На гербе изображены кенгуру и эму, так как они не умеют пятиться назад.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: ПОЛИТИКА ----
+            'australia-politics': {
+                title: { en: '🏛️ Political System', ru: '🏛️ Политическая система' },
+                facts: [
+                    { en: 'Parliament is bicameral (House of Representatives and Senate).', ru: 'Парламент двухпалатный (Палата представителей и Сенат).' },
+                    { en: 'Voting in federal elections is compulsory.', ru: 'Голосование на федеральных выборах – обязательное.' },
+                    { en: 'The Prime Minister is the head of government.', ru: 'Премьер-министр – глава правительства.' },
+                    { en: 'The Governor‑General represents the British monarch.', ru: 'Генерал-губернатор представляет британского монарха.' },
+                    { en: 'The High Court of Australia is the highest judicial authority.', ru: 'Высокий суд – высшая судебная инстанция.' },
+                    { en: 'The Australian Constitution was drafted at conventions in the 1890s.', ru: 'Конституция разработана на конвентах в 1890-х годах.' },
+                    { en: 'Australia is a member of the Commonwealth of Nations.', ru: 'Австралия – член Содружества наций.' },
+                    { en: 'The AUKUS pact links Australia, the United Kingdom and the United States.', ru: 'Пакт AUKUS связывает Австралию, Соединённое Королевство и Соединённые Штаты.' },
+                    { en: 'Preferential voting is used for the lower house.', ru: 'Для нижней палаты используется преференциальное голосование.' },
+                    { en: 'The Senate has equal representation from each state, regardless of population.', ru: 'В Сенате равное количество мест от каждого штата, независимо от населения.' },
+                    { en: 'Australia is a founding member of the G20.', ru: 'Австралия – страна-основатель G20.' },
+                    { en: 'The federal government is responsible for defence, foreign policy and trade.', ru: 'Федеральное правительство отвечает за оборону, внешнюю политику и торговлю.' },
+                    { en: 'Constitutional changes are made only through a referendum.', ru: 'Изменения в Конституцию – только через референдум.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: КУЛЬТУРА ----
+            'australia-culture': {
+                title: { en: '🎨 Culture & Society', ru: '🎨 Культура и общество' },
+                facts: [
+                    { en: 'Australia is a multicultural society ("salad bowl").', ru: 'Австралия – мультикультурное общество («салатница»).' },
+                    { en: '"Fair go" (equal chances) – a key value of Australian society.', ru: '«Fair go» (равные шансы) – ключевая ценность.' },
+                    { en: '"Mateship" – a central concept of Australian culture.', ru: '«Mateship» – центральная концепция культуры.' },
+                    { en: 'Barbecue – a cultural institution ("shrimp on the barbie").', ru: 'Барбекю – культурный институт («креветка на барбекю»).' },
+                    { en: 'Sydney Opera House – a masterpiece of 20th‑century architecture.', ru: 'Сиднейский оперный театр – шедевр архитектуры XX века.' },
+                    { en: 'Sydney Harbour Bridge is nicknamed "The Coathanger".', ru: 'Сиднейский Харбор-Бридж прозвали «Вешалкой».' },
+                    { en: 'Australian Rules Football (AFL) is the most popular spectator sport.', ru: 'Австралийский футбол (AFL) – самый популярный зрительский спорт.' },
+                    { en: 'Cricket is the national summer sport.', ru: 'Крикет – национальный летний вид спорта.' },
+                    { en: 'Australian English has a unique "broad" accent.', ru: 'Австралийский английский – уникальный «широкий» акцент.' },
+                    { en: '30 % of Australians were born overseas.', ru: '30 % австралийцев родились за пределами страны.' },
+                    { en: 'Outback life is an important part of the national myth.', ru: 'Жизнь в Аутбэке – часть национального мифа.' },
+                    { en: 'Vegemite – classic Australian yeast extract paste.', ru: 'Веджимайт – классическая австралийская паста.' },
+                    { en: 'Melbourne is famous for its coffee culture and laneways.', ru: 'Мельбурн знаменит кофейной культурой и «переулками».' },
+                    { en: 'The Royal Flying Doctor Service provides help in remote areas.', ru: 'Служба «летающих докторов» – помощь в удалённых регионах.' },
+                    { en: '"School of the Air" educates children in the Outback.', ru: '«Школа в эфире» – обучение детей в Аутбэке.' },
+                    { en: 'Australia hosted the Olympics in 1956 and 2000.', ru: 'Австралия принимала Олимпийские игры в 1956 и 2000 годах.' },
+                    { en: 'The didgeridoo is an iconic Aboriginal musical instrument.', ru: 'Диджериду – культовый инструмент аборигенов.' },
+                    { en: '"Waltzing Matilda" is often called the unofficial anthem.', ru: '«Waltzing Matilda» часто называют неофициальным гимном.' },
+                    { en: 'Bush poetry tradition (e.g. Banjo Paterson).', ru: 'Традиция «буш-поэзии» (Банджо Патерсон).' },
+                    { en: 'The Gallipoli campaign is a foundational military myth.', ru: 'Кампания в Галлиполи – основополагающий военный миф.' },
+                    { en: 'Multiculturalism became official policy in the 1970s.', ru: 'Мультикультурализм – официальная политика с 1970-х годов.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: ЕДА И ПРАЗДНИКИ ----
+            'australia-food': {
+                title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
+                facts: [
+                    { en: 'New Year\'s Day – January 1. Fireworks in Sydney Harbour.', ru: 'Новый год – 1 января. Фейерверки в Сиднейской гавани.' },
+                    { en: 'Australia Day – January 26. Beach barbecues, fireworks, award ceremonies.', ru: 'День Австралии – 26 января. Барбекю на пляжах, фейерверки, церемонии.' },
+                    { en: 'Easter (date varies) – chocolate eggs, hot cross buns, camping.', ru: 'Пасха (дата меняется) – шоколадные яйца, пасхальные булочки, кемпинг.' },
+                    { en: 'ANZAC Day – April 25. Dawn Service, two‑up coin game, meat pies.', ru: 'День АНЗАК – 25 апреля. Рассветная служба, игра в двухпенсовые монеты, мясные пироги.' },
+                    { en: 'Labour Day – varies by state (e.g. first Monday of October in NSW). Parades and picnics.', ru: 'День труда – даты разные (например, первый понедельник октября в NSW). Парады и пикники.' },
+                    { en: 'Queen\'s Birthday – second Monday of June (most states). Public holiday, barbecues.', ru: 'День рождения королевы – второй понедельник июня (в большинстве штатов). Выходной, барбекю.' },
+                    { en: 'Christmas – December 25. Summer, seafood (prawns), Christmas pudding with ice cream.', ru: 'Рождество – 25 декабря. Лето, морепродукты (креветки), рождественский пудинг с мороженым.' },
+                    { en: 'Boxing Day – December 26. Sales, traditional cricket Test in Melbourne.', ru: 'День подарков – 26 декабря. Распродажи, традиционный тест по крикету в Мельбурне.' },
+                    { en: 'Melbourne Cup Day – first Tuesday of November. Horse racing, champagne and fancy hats.', ru: 'Кубок Мельбурна – первый вторник ноября. Скачки, шампанское и нарядные шляпы.' },
+                    { en: 'Remembrance Day – November 11. Minute of silence, meat pies.', ru: 'День памяти – 11 ноября. Минута молчания, мясные пироги.' },
+                    { en: 'AFL Grand Final – last Saturday of September. Massive barbecues.', ru: 'Финал AFL – последняя суббота сентября. Массовое барбекю.' },
+                    { en: 'Lamington – sponge cake with chocolate and coconut, a national treat.', ru: 'Ламингтон – бисквит с шоколадом и кокосовой стружкой, национальное лакомство.' },
+                    { en: 'Pavlova – meringue cake with fruit (disputed with New Zealand).', ru: 'Павлова – торт из безе с фруктами (спор с Новой Зеландией).' },
+                    { en: 'Damper – bread baked in campfire coals, associated with bush life.', ru: 'Дам-и-да – хлеб, выпекаемый в костре, ассоциируется с жизнью в буше.' },
+                    { en: 'Fairy bread – toast with butter and sprinkles, popular at children\'s parties.', ru: 'Фейри-хлеб – тост с маслом и посыпкой, популярен на детских вечеринках.' },
+                    { en: 'Sausage sizzle – a simple street food.', ru: 'Сосиска в булке – уличное блюдо.' },
+                    { en: 'Vegemite on toast for breakfast.', ru: 'Веджимайт на тостах – завтрак.' },
+                    { en: 'Floating pie – meat pie in a bowl of pea soup, typical of South Australia.', ru: 'Пирог-поплавок – мясной пирог в тарелке горохового супа, Южная Австралия.' },
+                    { en: 'Kangaroo meat is considered a delicacy, often served as steaks on the barbecue.', ru: 'Мясо кенгуру – деликатес, часто на барбекю.' }
+                ]
+            },
+            // ---- АВСТРАЛИЯ: ЛЮДИ ----
+            'australia-people': {
+                title: { en: '⭐ Famous People', ru: '⭐ Известные личности' },
+                facts: [
+                    { en: '<strong>Hugh Jackman</strong> – actor, known as Wolverine.<br><img src="https://avatars.mds.yandex.net/get-entity_search/4740766/1276138457/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Хью Джекман</strong> – актёр, известный ролью Росомахи.<br><img src="https://avatars.mds.yandex.net/get-entity_search/4740766/1276138457/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Cate Blanchett</strong> – two‑time Oscar winner.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Cate_Blanchett_2011.jpg/500px-Cate_Blanchett_2011.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Кейт Бланшетт</strong> – двукратная обладательница «Оскара».<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Cate_Blanchett_2011.jpg/500px-Cate_Blanchett_2011.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Nicole Kidman</strong> – Oscar‑winning actress.<br><img src="https://cdn-media.tass.ru/width/1020_b9261fa1/tass/m2/uploads/i/20170621/4514746.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Николь Кидман</strong> – актриса, обладательница «Оскара».<br><img src="https://cdn-media.tass.ru/width/1020_b9261fa1/tass/m2/uploads/i/20170621/4514746.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Steve Irwin</strong> – "Crocodile Hunter".<br><img src="https://avatars.mds.yandex.net/i?id=23337ca9f20a475fdbfe794baf46a756_l-4904510-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Стив Ирвин</strong> – «Охотник на крокодилов».<br><img src="https://avatars.mds.yandex.net/i?id=23337ca9f20a475fdbfe794baf46a756_l-4904510-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Paul Hogan</strong> – star of "Crocodile Dundee".<br><img src="https://24smi.org/public/media/celebrity/2021/07/13/bbvtjlrszqtl-pol-khogan.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Пол Хоган</strong> – звезда фильма «Крокодил Данди».<br><img src="https://24smi.org/public/media/celebrity/2021/07/13/bbvtjlrszqtl-pol-khogan.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Chris Hemsworth</strong> – actor, played Thor.<br><img src="https://m.media-amazon.com/images/M/MV5BMjA0MDcwMDkxMV5BMl5BanBnXkFtZTcwNTU2NzAxNQ@@._V1_.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Кристофер Хемсворт</strong> – актёр, сыгравший Тора.<br><img src="https://m.media-amazon.com/images/M/MV5BMjA0MDcwMDkxMV5BMl5BanBnXkFtZTcwNTU2NzAxNQ@@._V1_.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Margot Robbie</strong> – Oscar nominee, star of "Barbie".<br><img src="https://avatars.mds.yandex.net/get-entity_search/2300207/1276268541/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Марго Робби</strong> – номинантка на «Оскар», звезда «Барби».<br><img src="https://avatars.mds.yandex.net/get-entity_search/2300207/1276268541/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Russell Crowe</strong> – Oscar winner for "Gladiator".<br><img src="https://avatars.mds.yandex.net/get-entity_search/10920629/1244294955/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Рассел Кроу</strong> – обладатель «Оскара» за «Гладиатора».<br><img src="https://avatars.mds.yandex.net/get-entity_search/10920629/1244294955/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: ГЕОГРАФИЯ ----
+            'nz-geo': {
+                title: { en: '🗺️ Geography & Nature', ru: '🗺️ География и природа' },
+                facts: [
+                    { en: 'Capital – Wellington (southernmost capital in the world).', ru: 'Столица – Веллингтон (самая южная столица в мире).' },
+                    { en: 'Major cities: Auckland ("City of Sails"), Christchurch (South Island), Dunedin, Hamilton, Wellington.',
+                        ru: 'Крупные города: Окленд («Город парусов»), Крайстчерч (Южный остров), Данидин, Гамильтон, Веллингтон.' },
+                    { en: 'New Zealand consists of two main islands – North and South.', ru: 'Новая Зеландия состоит из двух главных островов – Северного и Южного.' },
+                    { en: 'Largest city – Auckland ("City of Sails").', ru: 'Крупнейший город – Окленд («Город парусов»).' },
+                    { en: 'South Island is the largest, famous for the Southern Alps.', ru: 'Южный остров – крупнейший, знаменит Южными Альпами.' },
+                    { en: 'Mount Cook (Aoraki) – highest point (3,724 m).', ru: 'Гора Кука (Аораки) – высшая точка (3724 м).' },
+                    { en: 'Milford Sound – famous fjord, called "the eighth wonder of the world".', ru: 'Милфорд-Саунд – знаменитый фьорд, названный «восьмым чудом света».' },
+                    { en: 'Rotorua – centre of geothermal activity and Māori culture.', ru: 'Роторуа – центр геотермальной активности и маорийской культуры.' },
+                    { en: 'Lake Taupō – the largest lake, formed by a supereruption.', ru: 'Озеро Таупо – крупнейшее озеро, возникшее в результате суперизвержения.' },
+                    { en: 'New Zealand lies on the boundary of two tectonic plates.', ru: 'Новая Зеландия находится на границе двух тектонических плит.' },
+                    { en: 'The country is famous for having no native land mammals (before humans).', ru: 'Страна знаменита отсутствием хищных млекопитающих (до появления человека).' },
+                    { en: 'The kiwi – flightless national symbol, endemic.', ru: 'Киви – нелетающий национальный символ, эндемик.' },
+                    { en: 'Kākāpō – the world\'s only flightless parrot.', ru: 'Какапо – единственный в мире нелетающий попугай.' },
+                    { en: 'Tuatara – an ancient reptile, a "living fossil".', ru: 'Туатара – древняя рептилия, «живое ископаемое».' },
+                    { en: 'The silver fern – a key national symbol.', ru: 'Серебряный папоротник – важнейший национальный символ.' },
+                    { en: 'There are no snakes in the country.', ru: 'В стране нет змей.' },
+                    { en: '"The Lord of the Rings" was filmed here, boosting film tourism.', ru: '«Властелин колец» снят здесь, создав поток кинотуризма.' },
+                    { en: 'Hobbiton in Matamata – a preserved movie set.', ru: 'Хоббитон в Матамата – сохранившаяся декорация.' },
+                    { en: 'Franz Josef Glacier – unique glaciers descending into rainforests.', ru: 'Ледники Франца-Иосифа – уникальные ледники, спускающиеся в дождевые леса.' },
+                    { en: 'Waitomo Caves are famous for glowworms.', ru: 'Пещеры Вайтомо знамениты светящимися червями.' },
+                    { en: 'New Zealand is divided into 16 regions.', ru: 'Новая Зеландия разделена на 16 регионов.' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: ИСТОРИЯ ----
+            'nz-history': {
+                title: { en: '📜 History & Indigenous Peoples', ru: '📜 История и коренное население' },
+                facts: [
+                    { en: 'New Zealand was one of the last landmasses settled by humans (Māori in the 13th century).', ru: 'Новая Зеландия – одна из последних земель, заселённых людьми (маори в XIII веке).' },
+                    { en: 'Abel Tasman (Dutch) – first European to sight the islands (1642).', ru: 'Абель Тасман – первый европеец, увидевший острова (1642).' },
+                    { en: 'James Cook charted the islands in 1769.', ru: 'Джеймс Кук нанёс острова на карту в 1769 году.' },
+                    { en: 'The Treaty of Waitangi (1840) – the foundational document between the British Crown and Māori.', ru: 'Договор Вайтанги (1840) – основополагающий документ между британской короной и маори.' },
+                    { en: 'Māori call the country "Aotearoa" (Land of the Long White Cloud).', ru: 'Маори называют страну «Аотеароа» (Страна длинного белого облака).' },
+                    { en: 'New Zealand was part of the colony of New South Wales until 1841.', ru: 'Новая Зеландия была частью колонии Новый Южный Уэльс до 1841 года.' },
+                    { en: 'The country became a Dominion in 1907.', ru: 'Страна получила статус Доминиона в 1907 году.' },
+                    { en: 'New Zealand was the first country to give women the vote (1893).', ru: 'Новая Зеландия – первая страна, давшая женщинам право голоса (1893).' },
+                    { en: 'During WWI, New Zealand suffered heavy losses at Gallipoli.', ru: 'В Первой мировой войне Новая Зеландия понесла огромные потери в Галлиполи.' },
+                    { en: 'Kate Sheppard – suffragist leader, featured on the $10 note.', ru: 'Кейт Шеппард – лидер суфражистского движения, изображена на 10-долларовой купюре.' },
+                    { en: 'In 1987, the country was declared a Nuclear‑Free Zone.', ru: 'В 1987 году страна объявлена безъядерной зоной.' },
+                    { en: 'Māori maintain strong cultural influence through "kōhanga reo" (language nests).', ru: 'Маори сохраняют культурное влияние через «коранга» (языковые гнёзда).' },
+                    { en: 'The Waitangi Tribunal still adjudicates Treaty claims.', ru: 'Трибунал Вайтанги до сих пор рассматривает иски по Договору.' },
+                    { en: 'New Zealand is a constitutional monarchy within the Commonwealth.', ru: 'Новая Зеландия – конституционная монархия в составе Содружества.' },
+                    { en: 'Haka – a ritual Māori dance, now a global symbol of the country.', ru: 'Хака – ритуальный танец маори, мировой символ страны.' },
+                    { en: 'Iwi – Māori tribal groups with significant economic weight.', ru: 'Иви – племенные группы маори, обладающие экономическим весом.' },
+                    { en: 'Marae – sacred meeting place for Māori communities.', ru: 'Мараэ – священное место для собраний маори.' },
+                    { en: 'The British monarch is head of state, represented by the Governor‑General.', ru: 'Британский монарх – глава государства, представлен генерал-губернатором.' },
+                    { en: 'Wellington became the capital in 1865, replacing Auckland.', ru: 'Веллингтон стал столицей в 1865 году, сменив Окленд.' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: ПОЛИТИКА ----
+            'nz-politics': {
+                title: { en: '🏛️ Politics & Society', ru: '🏛️ Политика и общество' },
+                facts: [
+                    { en: 'New Zealand\'s Parliament has been unicameral since 1951.', ru: 'Парламент Новой Зеландии – однопалатный с 1951 года.' },
+                    { en: 'The electoral system is mixed (MMP – Mixed Member Proportional).', ru: 'Избирательная система – смешанная (MMP).' },
+                    { en: 'The Prime Minister is the head of government.', ru: 'Премьер-министр – глава правительства.' },
+                    { en: 'The country is known for its high level of social inclusiveness.', ru: 'Страна известна высоким уровнем социальной инклюзивности.' },
+                    { en: 'National television and radio (TVNZ, RNZ) are publicly funded.', ru: 'Национальное телевидение и радио (TVNZ, RNZ) имеют общественное финансирование.' },
+                    { en: 'Education is based on the British model (NCEA).', ru: 'Система образования – британская модель (NCEA).' },
+                    { en: 'New Zealand actively promotes "green" tourism.', ru: 'Новая Зеландия продвигает «зелёный» туризм.' },
+                    { en: 'Rugby is the country\'s religion – the All Blacks are world leaders.', ru: 'Регби – религия страны, сборная All Blacks – мировой лидер.' },
+                    { en: 'The All Blacks\' haka is one of the most recognisable rituals in sport.', ru: 'Хака перед игрой All Blacks – один из самых узнаваемых ритуалов в спорте.' },
+                    { en: 'Netball is the most popular women\'s sport.', ru: 'Нетания – самый популярный женский вид спорта.' },
+                    { en: 'The country exports dairy, kiwifruit and lamb.', ru: 'Страна экспортирует молочку, киви и баранину.' },
+                    { en: '"Kiwi" is used as a self‑name for New Zealand citizens.', ru: 'Понятие «Kiwi» – самоназвание граждан Новой Зеландии.' },
+                    { en: 'Corruption levels are among the lowest in the world.', ru: 'Уровень коррупции – один из самых низких в мире.' },
+                    { en: 'Local government consists of regional and territorial councils.', ru: 'Местное самоуправление – региональные и территориальные советы.' },
+                    { en: 'ACC – a unique state insurance system.', ru: 'ACC – уникальная госсистема страхования от несчастных случаев.' },
+                    { en: 'Christmas is celebrated in summer.', ru: 'Рождество празднуется летом.' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: КУЛЬТУРА ----
+            'nz-culture': {
+                title: { en: '🎨 Culture & Society', ru: '🎨 Культура и общество' },
+                facts: [
+                    { en: 'Hiking is called "tramping" here.', ru: '«Хайкинг» здесь называют «трампинг».' },
+                    { en: 'Barbecue is an important part of leisure.', ru: 'Барбекю – важная часть досуга.' },
+                    { en: 'Christchurch – the most "English" city in the country.', ru: 'Крайстчерч – самый «английский» город страны.' },
+                    { en: 'Dunedin has Scottish roots.', ru: 'Данидин – город с шотландскими корнями.' },
+                    { en: 'Coffee culture (flat white) is a source of national pride.', ru: 'Кофейная культура (flat white) – предмет национальной гордости.' },
+                    { en: 'The standard of living is traditionally among the world\'s top.', ru: 'Уровень жизни традиционно входит в мировой топ.' },
+                    { en: 'The country is a member of APEC and the Commonwealth.', ru: 'Страна – член АТЭС и Содружества.' },
+                    { en: '"Great Walks" – a network of elite hiking routes.', ru: '«Великие прогулки» – сеть элитных пеших маршрутов.' },
+                    { en: 'Bungee jumping was commercialised here (Queenstown).', ru: 'Банджи-джампинг коммерциализирован здесь (Квинстаун).' },
+                    { en: 'Queenstown – the capital of adventure tourism.', ru: 'Квинстаун – столица приключенческого туризма.' },
+                    { en: 'Lake Wakatipu is a long glacial lake.', ru: 'Озеро Вакатипу – длинное озеро ледникового происхождения.' },
+                    { en: 'Stewart Island is the third‑largest island, almost untouched by humans.', ru: 'Остров Стюарт – третий по величине, почти не тронутый человеком.' },
+                    { en: 'Cook Strait separates the North and South Islands.', ru: 'Пролив Кука разделяет Северный и Южный острова.' },
+                    { en: 'The flag features four stars of the Southern Cross.', ru: 'Флаг содержит четыре звезды Южного Креста.' },
+                    { en: 'The British Union Jack in the canton recalls colonial past.', ru: 'Юнион Джек в кантоне напоминает о колониальном прошлом.' },
+                    { en: 'Māori tattoos (Tā moko) carry deep identity significance.', ru: 'Маорийские татуировки (Та-моко) имеют глубокий смысл идентичности.' },
+                    { en: 'Hāngī – traditional earth‑oven cooking.', ru: 'Ханги – традиционное приготовление в земляной печи.' },
+                    { en: 'Kūmara (sweet potato) is an important element of the cuisine.', ru: 'Кумэра (сладкий картофель) – важный элемент кухни.' },
+                    { en: 'New Zealand is a major centre for astrotourism (dark skies).', ru: 'Новая Зеландия – центр астрономического туризма (тёмное небо).' },
+                    { en: 'Te Papa Tongarewa is the national museum in Wellington.', ru: 'Те-Папа-Тонгарева – национальный музей в Веллингтоне.' },
+                    { en: 'Auckland Harbour Bridge is a city symbol.', ru: 'Оклендский мост Харбор – символ города.' },
+                    { en: 'The country has a progressive tax system.', ru: 'Страна перешла на прогрессивную налоговую систему.' },
+                    { en: 'New Zealand\'s energy is more than 80 % renewable (hydro, geothermal).', ru: 'Энергетика Новой Зеландии более чем на 80 % возобновляемая.' },
+                    { en: 'Tiki – a traditional Māori amulet.', ru: 'Тики – традиционный амулет маори.' },
+                    { en: 'Pounamu (greenstone) is a sacred stone.', ru: 'Поунам (зелёный нефрит) – священный камень.' },
+                    { en: 'Ferries are the most popular transport between islands.', ru: 'Самый популярный транспорт между островами – паромы.' },
+                    { en: 'New Zealand is a leader in merino wool production.', ru: 'Новая Зеландия – лидер по производству шерсти мериноса.' },
+                    { en: 'Strict phytosanitary laws protect the ecosystem.', ru: 'Строгое фитосанитарное законодательство.' },
+                    { en: '"Mana" – the concept of spiritual power and prestige in Māori culture.', ru: '«Мана» – концепция духовной силы и престижа в культуре маори.' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: ЕДА И ПРАЗДНИКИ ----
+            'nz-food': {
+                title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
+                facts: [
+                    { en: 'New Year\'s Day – January 1. Fireworks in Auckland and Wellington.', ru: 'Новый год – 1 января. Фейерверки в Окленде и Веллингтоне.' },
+                    { en: 'Waitangi Day – February 6. National holiday, cultural festivals, hāngī.', ru: 'День Вайтанги – 6 февраля. Национальный праздник, фестивали, ханги.' },
+                    { en: 'Easter (date varies) – chocolate eggs, hot cross buns, outdoor activities.', ru: 'Пасха (дата меняется) – шоколадные яйца, пасхальные булочки, выезды на природу.' },
+                    { en: 'ANZAC Day – April 25. Dawn Services, ANZAC biscuits, meat pies.', ru: 'День АНЗАК – 25 апреля. Рассветные службы, печенье ANZAC, мясные пироги.' },
+                    { en: 'Queen\'s Birthday – first Monday of June. Public holiday, sports and barbecues.', ru: 'День рождения королевы – первый понедельник июня. Выходной, спорт и барбекю.' },
+                    { en: 'Matariki (Māori New Year) – June–July. Hāngī, family gatherings, stargazing.', ru: 'Матарики (Новый год маори) – июнь-июль. Ханги, семейные посиделки, наблюдение за звёздами.' },
+                    { en: 'Labour Day – fourth Monday of October. Public holiday, union parades.', ru: 'День труда – четвёртый понедельник октября. Выходной, парады профсоюзов.' },
+                    { en: 'Christmas – December 25. Summer, beach picnics with prawns and pavlova.', ru: 'Рождество – 25 декабря. Лето, пляжные пикники с креветками и павловой.' },
+                    { en: 'Boxing Day – December 26. Sales, cricket match in Wellington.', ru: 'День подарков – 26 декабря. Распродажи, крикетный матч в Веллингтоне.' },
+                    { en: 'Province Day – varies by region (e.g. Auckland Day – January 29).', ru: 'День провинции – даты разные (например, Окленд – 29 января).' },
+                    { en: 'St. Patrick\'s Day – March 17. Parades, Irish beer and lamb.', ru: 'День Святого Патрика – 17 марта. Парады, ирландское пиво и баранина.' },
+                    { en: 'Remembrance Day – November 11. Ceremonies with poppies, pies.', ru: 'День памяти – 11 ноября. Церемонии с маками, пироги.' },
+                    { en: 'Pavlova – meringue dessert with fruit (disputed with Australia).', ru: 'Павлова – десерт из безе с фруктами (спор с Австралией).' },
+                    { en: 'Kūmara (sweet potato) – a common ingredient, especially in hāngī.', ru: 'Кумэра (сладкий картофель) – частый ингредиент, особенно в ханги.' },
+                    { en: 'Banoffee pie – popular café dessert.', ru: 'Банановый пирог – популярная выпечка в кафе.' },
+                    { en: 'Kiwiberry – a mini‑kiwi grown in New Zealand.', ru: 'Киви-берри – мини-киви, выращиваемый в Новой Зеландии.' },
+                    { en: 'Mussel paté – a traditional Māori dish.', ru: 'Паштет из моллюсков – традиционное блюдо маори.' },
+                    { en: 'Hokey Pokey ice cream – vanilla with caramel pieces.', ru: 'Мороженое Hokey Pokey – ванильное с кусочками карамели.' },
+                    { en: 'Marmite – yeast paste similar to Vegemite, popular for breakfast.', ru: 'Мармайт – дрожжевая паста, похожая на веджимайт, популярна на завтрак.' }
+                ]
+            },
+            // ---- НОВАЯ ЗЕЛАНДИЯ: ЛЮДИ ----
+            'nz-people': {
+                title: { en: '⭐ Famous People', ru: '⭐ Известные личности' },
+                facts: [
+                    { en: '<strong>Peter Jackson</strong> – director, creator of "Lord of the Rings".<br><img src="https://cdn.7days.ru/upload/images/e4b/b0b41bc539e71064ead0194ca09b7.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Питер Джексон</strong> – режиссёр, создатель «Властелина колец».<br><img src="https://cdn.7days.ru/upload/images/e4b/b0b41bc539e71064ead0194ca09b7.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Taika Waititi</strong> – director, Oscar winner for "Jojo Rabbit".<br><img src="https://theblueprint.ru/upload/25769/vms/1a4e2c7f72bbbdb3772eb0ca3a4203d1_large.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Тайка Вайтити</strong> – режиссёр, обладатель «Оскара» за «Кролика Джоджо».<br><img src="https://theblueprint.ru/upload/25769/vms/1a4e2c7f72bbbdb3772eb0ca3a4203d1_large.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Sir Edmund Hillary</strong> – first to climb Everest (1953).<br><img src="https://avatars.mds.yandex.net/get-entity_search/6246269/1265000961/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Сэр Эдмунд Хиллари</strong> – первым покорил Эверест (1953).<br><img src="https://avatars.mds.yandex.net/get-entity_search/6246269/1265000961/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Kate Sheppard</strong> – suffragist leader, on the $10 note.<br><img src="https://avatars.mds.yandex.net/i?id=b74e8e5355c5d9557e3d7b27236d2aeb_l-5209742-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Кейт Шеппард</strong> – лидер суфражисток, на 10-долларовой купюре.<br><img src="https://avatars.mds.yandex.net/i?id=b74e8e5355c5d9557e3d7b27236d2aeb_l-5209742-images-thumbs&n=13" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Russell Crowe</strong> – actor, born in New Zealand.<br><img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/e/ee/Russell_Crowe.jpg/revision/latest?cb=20210329221753&path-prefix=ru" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Рассел Кроу</strong> – актёр, родился в Новой Зеландии.<br><img src="https://static.wikia.nocookie.net/marvelcinematicuniverse/images/e/ee/Russell_Crowe.jpg/revision/latest?cb=20210329221753&path-prefix=ru" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Lorde</strong> – singer, Grammy winner.<br><img src="https://avatars.mds.yandex.net/get-entity_search/2103124/1004769332/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Лорд</strong> – певица, обладательница «Грэмми».<br><img src="https://avatars.mds.yandex.net/get-entity_search/2103124/1004769332/S600xU_2x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Jane Campion</strong> – Oscar‑winning director.<br><img src="https://img.huffingtonpost.com/asset/62416a9e24000043dd96dbe7.jpeg?cache=T03QGHKlLe&amp;ops=1200_630" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Джейн Кэмпион</strong> – режиссёр, обладательница «Оскара».<br><img src="https://img.huffingtonpost.com/asset/62416a9e24000043dd96dbe7.jpeg?cache=T03QGHKlLe&amp;ops=1200_630" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Ernest Rutherford</strong> – physicist, "father of nuclear physics".<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Ernest_Rutherford_1908.jpg/500px-Ernest_Rutherford_1908.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Эрнест Резерфорд</strong> – физик, «отец ядерной физики».<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Ernest_Rutherford_1908.jpg/500px-Ernest_Rutherford_1908.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' }
+                ]
+            },
+            // ---- КАНАДА: ГЕОГРАФИЯ ----
+            'canada-geo': {
+                title: { en: '🗺️ Geography & Administration', ru: '🗺️ География и административное устройство' },
+                facts: [
+                    { en: 'Capital – Ottawa (chosen by Queen Victoria in 1857).', ru: 'Столица — Оттава (выбрана королевой Викторией в 1857 году).' },
+                    { en: 'Provinces and territories with capitals: Ontario (Toronto), Quebec (Quebec City), Nova Scotia (Halifax), New Brunswick (Fredericton), Manitoba (Winnipeg), British Columbia (Victoria), Prince Edward Island (Charlottetown), Saskatchewan (Regina), Alberta (Edmonton), Newfoundland and Labrador (St. John\'s). Territories: Yukon (Whitehorse), Northwest Territories (Yellowknife), Nunavut (Iqaluit).',
+                        ru: 'Провинции и территории со столицами: Онтарио (Торонто), Квебек (Квебек-Сити), Новая Шотландия (Галифакс), Нью-Брансуик (Фредериктон), Манитоба (Виннипег), Британская Колумбия (Виктория), Остров Принца Эдуарда (Шарлоттаун), Саскачеван (Реджайна), Альберта (Эдмонтон), Ньюфаундленд и Лабрадор (Сент-Джонс). Территории: Юкон (Уайтхорс), Северо-Западные территории (Йеллоунайф), Нунавут (Икалуит).' },
+                    { en: 'Canada is the second‑largest country by area in the world.', ru: 'Канада — вторая по площади страна мира.' },
+                    { en: 'Nunavut – largest administrative unit (created in 1999 for Inuit).', ru: 'Нунавут — крупнейшая административная единица (создана в 1999 году для инуитов).' },
+                    { en: 'The Canada–United States border is the world\'s longest land border (8,891 km).', ru: 'Граница Канады и Соединённых Штатов — самая длинная сухопутная граница в мире (8891 км).' },
+                    { en: 'Canada has the longest coastline in the world.', ru: 'Канада имеет самую длинную береговую линию.' },
+                    { en: 'The Canadian Shield covers about half the country.', ru: 'Канадский щит занимает около половины площади страны.' },
+                    { en: 'Niagara Falls – main natural attraction on the US border.', ru: 'Ниагарский водопад — главная природная достопримечательность на границе с США.' },
+                    { en: 'Hudson Bay – a huge inland sea.', ru: 'Гудзонов залив — огромное внутреннее море.' },
+                    { en: 'Mount Logan – highest point (5,959 m).', ru: 'Гора Логан — самая высокая точка (5959 м).' },
+                    { en: 'Canada has the third‑largest oil reserves (Alberta oil sands).', ru: 'Канада обладает третьими по величине запасами нефти (нефтяные пески Альберты).' },
+                    { en: 'More than 2 million lakes – more than all other countries combined.', ru: 'Более 2 миллионов озёр — больше, чем во всех остальных странах.' },
+                    { en: 'Banff – oldest national park (founded 1885).', ru: 'Банфф — старейший национальный парк (1885).' },
+                    { en: 'Baffin Island – fifth‑largest island in the world.', ru: 'Баффинова Земля — пятый по величине остров в мире.' },
+                    { en: 'Mackenzie River – Canada\'s longest river.', ru: 'Река Маккензи — самая длинная река Канады.' },
+                    { en: 'Climate ranges from Arctic to temperate.', ru: 'Климат — от арктического до умеренного.' },
+                    { en: 'Quebec – largest province by area.', ru: 'Квебек — крупнейшая по площади провинция.' },
+                    { en: 'Toronto – largest financial and cultural centre (not the capital).', ru: 'Торонто — крупнейший финансовый и культурный центр (не столица).' },
+                    { en: 'Vancouver – largest Pacific port.', ru: 'Ванкувер — крупнейший порт на Тихом океане.' }
+                ]
+            },
+            // ---- КАНАДА: ИСТОРИЯ ----
+            'canada-history': {
+                title: { en: '📜 History & Statehood', ru: '📜 История и государственность' },
+                facts: [
+                    { en: 'Confederation formed in 1867 (British North America Act).', ru: 'Конфедерация образована в 1867 году (Акт о Британской Северной Америке).' },
+                    { en: 'Canada is a constitutional monarchy and parliamentary democracy.', ru: 'Канада — конституционная монархия и парламентская демократия.' },
+                    { en: 'Head of state – British monarch (represented by Governor‑General).', ru: 'Глава государства — британский монарх (представлен генерал-губернатором).' },
+                    { en: 'Westminster system of government.', ru: 'Вестминстерская система правления.' },
+                    { en: 'First Prime Minister – Sir John A. Macdonald.', ru: 'Первый премьер-министр — сэр Джон А. Макдональд.' },
+                    { en: 'Full legislative independence from Britain in 1982 (Canada Act).', ru: 'Полная законодательная независимость от Британии в 1982 году (Акт о Канаде).' },
+                    { en: 'Participation in both world wars strengthened national identity.', ru: 'Участие в двух мировых войнах укрепило национальную идентичность.' },
+                    { en: 'RCMP – national symbol.', ru: 'Канадская конная полиция (RCMP) — национальный символ.' },
+                    { en: 'Canada Day – July 1 (anniversary of confederation).', ru: 'День Канады — 1 июля (годовщина объединения).' },
+                    { en: '"Two nations" (English and French) status enshrined in the constitution.', ru: 'Статус «двух наций» (английской и французской) заложен в конституции.' },
+                    { en: 'Quebec declared itself a "nation within a united Canada".', ru: 'Квебек провозгласил себя «нацией внутри объединённой Канады».' },
+                    { en: 'Quebec independence referendums in 1980 and 1995 (both unity won).', ru: 'Референдумы о независимости Квебека в 1980 и 1995 годах (победа сторонников единства).' },
+                    { en: 'Relations with Indigenous peoples – key political theme.', ru: 'Отношения с коренными народами — ключевая политическая тема.' },
+                    { en: 'Canada is a member of G7 and NATO.', ru: 'Канада — член G7 и НАТО.' },
+                    { en: 'Official bilingualism (English and French) since 1969.', ru: 'Официальное двуязычие (английский и французский) с 1969 года.' }
+                ]
+            },
+            // ---- КАНАДА: ЭКОНОМИКА ----
+            'canada-economy': {
+                title: { en: '📊 Economy & Resources', ru: '📊 Экономика и ресурсы' },
+                facts: [
+                    { en: 'Canada is a major exporter of agricultural products (wheat).', ru: 'Канада — один из крупнейших экспортёров сельхозпродукции (пшеница).' },
+                    { en: 'Forestry – one of the pillars of the economy.', ru: 'Лесная промышленность — один из столпов экономики.' },
+                    { en: 'The Canadian dollar is often called the "loonie".', ru: 'Канадский доллар называют «луни».' },
+                    { en: 'Produces more than 70 % of the world\'s maple syrup.', ru: 'Производит более 70 % мирового кленового сиропа.' },
+                    { en: 'Hydropower is important (cheap energy).', ru: 'Важное значение имеет гидроэнергетика.' },
+                    { en: 'Economy heavily dependent on exports to the United States (over 75 %).', ru: 'Экономика сильно зависит от экспорта в Соединённые Штаты (более 75 %).' },
+                    { en: 'Member of USMCA trade agreement (formerly NAFTA).', ru: 'Член торгового соглашения USMCA.' },
+                    { en: 'Leading producer of uranium, potash and nickel.', ru: 'Лидер в добыче урана, калийных солей и никеля.' },
+                    { en: 'Advanced aerospace industry (Bombardier).', ru: 'Развитая аэрокосмическая промышленность (Bombardier).' },
+                    { en: 'Healthcare – public and free at the provincial level.', ru: 'Система здравоохранения — государственная и бесплатная на уровне провинций.' },
+                    { en: 'High immigration to compensate for an ageing population.', ru: 'Высокий уровень иммиграции для компенсации старения населения.' },
+                    { en: 'Athabasca oil sands – huge but controversial resource.', ru: 'Нефтяные пески Атабаски — огромный, но спорный ресурс.' },
+                    { en: 'Canada\'s financial system is among the most stable in the world.', ru: 'Финансовая система Канады — одна из самых стабильных в мире.' },
+                    { en: 'Major contribution to science (insulin discovered in Toronto in 1921).', ru: 'Значительный вклад в науку (инсулин открыт в Торонто в 1921 году).' }
+                ]
+            },
+            // ---- КАНАДА: КУЛЬТУРА ----
+            'canada-culture': {
+                title: { en: '🎨 Culture & Society', ru: '🎨 Культура и общество' },
+                facts: [
+                    { en: 'Hockey is Canada\'s "religion".', ru: 'Хоккей — «религия» Канады.' },
+                    { en: 'Lacrosse – official summer national sport.', ru: 'Лакросс — официальный летний национальный спорт.' },
+                    { en: 'Canadian cuisine blends British, French and Indigenous traditions.', ru: 'Канадская кухня сочетает британские, французские и коренные традиции.' },
+                    { en: 'Poutine – Quebec dish (fries, cheese curds, gravy).', ru: 'Путин — квебекское блюдо (картошка фри с сыром и подливой).' },
+                    { en: '"Multiculturalism" – official government policy since 1971.', ru: '«Мультикультурализм» — официальная политика с 1971 года.' },
+                    { en: 'Toronto – one of the most ethnically diverse cities in the world.', ru: 'Торонто — один из самых этнически разнообразных городов мира.' },
+                    { en: 'National broadcaster – CBC/Radio-Canada.', ru: 'Национальная телерадиокомпания — CBC/Radio-Canada.' },
+                    { en: 'Canadian literature (Margaret Atwood, Alice Munro).', ru: 'Канадская литература (Маргарет Этвуд, Элис Манро).' },
+                    { en: 'Music scene (Leonard Cohen, Neil Young, Drake).', ru: 'Музыкальная сцена (Леонард Коэн, Нил Янг, Дрейк).' },
+                    { en: 'Film industry (Montreal and Vancouver – "Hollywood North").', ru: 'Киноиндустрия (Монреаль и Ванкувер — «Голливуд Севера»).' },
+                    { en: 'Thanksgiving in Canada – second Monday of October.', ru: 'День благодарения в Канаде — второй понедельник октября.' },
+                    { en: 'National symbols: maple leaf, beaver, loon.', ru: 'Национальные символы: кленовый лист, бобр, гагара.' },
+                    { en: 'Flag with maple leaf adopted only in 1965.', ru: 'Флаг с кленовым листом принят только в 1965 году.' },
+                    { en: 'RCMP – symbol of law and order.', ru: 'Королевская канадская конная полиция — символ законности.' },
+                    { en: 'Canadians value diplomacy and compromise.', ru: 'Канадцы ценят дипломатичность и компромисс.' },
+                    { en: 'Quality of life in Canada consistently ranks in the top ten.', ru: 'Уровень жизни в Канаде — в десятке лучших в мире.' },
+                    { en: 'Education is decentralised (provincially managed).', ru: 'Система образования децентрализована (управляется провинциями).' },
+                    { en: 'Universities of Toronto, McGill and UBC are world‑class.', ru: 'Университеты Торонто, Макгилла и Британской Колумбии — ведущие мировые вузы.' },
+                    { en: '"Mosaic" – metaphor for Canadian society (vs US "melting pot").', ru: '«Мозаика» — метафора канадского общества (в отличие от «плавильного котла» США).' },
+                    { en: 'Polite behaviour ("Sorry" as a cultural marker).', ru: 'Вежливое поведение («Sorry» как культурный маркер).' },
+                    { en: 'Inuit art (soapstone sculpture) has international recognition.', ru: 'Инуитское искусство (скульптура из мыльного камня) имеет мировое признание.' },
+                    { en: 'Canadian cities regularly top livability rankings.', ru: 'Канадские города регулярно занимают первые места в рейтингах качества жизни.' },
+                    { en: 'Volunteering plays an important role in social life.', ru: 'Важная роль волонтёрства в социальной жизни.' },
+                    { en: 'Passion for outdoor activities (camping, canoeing).', ru: 'Страсть к активному отдыху на природе (кемпинг, каноэ).' },
+                    { en: 'Remembrance Day November 11.', ru: 'День Победы 11 ноября.' },
+                    { en: 'CN Tower in Toronto was the world\'s tallest structure for decades.', ru: 'Си-Эн Тауэр в Торонто долго была самым высоким сооружением мира.' },
+                    { en: 'Montreal – city with a rich European atmosphere.', ru: 'Монреаль — город с богатой европейской атмосферой.' },
+                    { en: 'Calgary – known for its annual rodeo (Stampede).', ru: 'Калгари известен ежегодным родео (Stampede).' },
+                    { en: 'Ottawa – city of museums and government buildings.', ru: 'Оттава — город музеев и правительственных зданий.' },
+                    { en: 'Francophonie in Canada extends beyond Quebec (Acadia, Manitoba).', ru: 'Франкофония в Канаде выходит за пределы Квебека (Акадия, Манитоба).' },
+                    { en: 'National pride in UN peacekeeping missions.', ru: 'Гордость за миротворческие миссии ООН.' },
+                    { en: 'Winter sports sector (skiing in Whistler).', ru: 'Развитый сектор зимнего спорта (Уистлер).' },
+                    { en: 'Canada is a world leader in refugee resettlement.', ru: 'Канада — мировой лидер по приёму беженцев.' },
+                    { en: 'Railways (transcontinental) unified the country.', ru: 'Железные дороги (трансканадская магистраль) объединили страну.' },
+                    { en: 'Every Canadian\'s dream – a cottage by a lake.', ru: 'Мечта любого канадца — домик у озера.' }
+                ]
+            },
+            // ---- КАНАДА: ЕДА И ПРАЗДНИКИ ----
+            'canada-food': {
+                title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
+                facts: [
+                    { en: 'New Year\'s Day – January 1. Parties, fireworks, champagne toasts.', ru: 'Новый год – 1 января. Вечеринки, фейерверки, шампанское.' },
+                    { en: 'Family Day – third Monday of February. Skating, pancakes.', ru: 'День семьи – третий понедельник февраля. Катание на коньках, блины.' },
+                    { en: 'St. Patrick\'s Day – March 17. Parades, green beer, Irish dishes.', ru: 'День святого Патрика – 17 марта. Парады, зелёное пиво, ирландские блюда.' },
+                    { en: 'Easter (date varies) – chocolate eggs, Easter bunny, ham or lamb.', ru: 'Пасха (дата меняется) – шоколадные яйца, пасхальный кролик, ветчина или ягнёнок.' },
+                    { en: 'Victoria Day – last Monday of May. Start of summer, cottages open.', ru: 'День Виктории – последний понедельник мая. Начало лета, открытие дач.' },
+                    { en: 'Quebec Winter Carnival – late January – mid‑February. Ice sculptures, canoe races, mulled wine.', ru: 'Зимний карнавал в Квебеке – конец января – середина февраля. Ледяные скульптуры, каноэ, глинтвейн.' },
+                    { en: 'Canada Day – July 1. Fireworks, parades, barbecues.', ru: 'День Канады – 1 июля. Фейерверки, парады, барбекю.' },
+                    { en: 'Saint-Jean-Baptiste Day – June 24 (Quebec). Parades, music, poutine.', ru: 'День святого Иоанна Крестителя – 24 июня (Квебек). Парады, музыка, путин.' },
+                    { en: 'Labour Day – first Monday of September. Last summer picnic.', ru: 'День Труда – первый понедельник сентября. Последний летний пикник.' },
+                    { en: 'Thanksgiving – second Monday of October. Turkey, mashed potatoes, pumpkin pie, cranberry sauce.', ru: 'День благодарения – второй понедельник октября. Индейка, картофельное пюре, тыквенный пирог, клюквенный соус.' },
+                    { en: 'Halloween – October 31. Pumpkin carving, costumes, sweets.', ru: 'Хэллоуин – 31 октября. Вырезание тыкв, костюмы, сладости.' },
+                    { en: 'Remembrance Day – November 11. Memorial services with poppies, veterans\' lunches.', ru: 'День памяти – 11 ноября. Поминальные службы с маками, обеды для ветеранов.' },
+                    { en: 'Christmas – December 25. Turkey or ham, maple pie, tourtière in Quebec.', ru: 'Рождество – 25 декабря. Индейка или окорок, кленовый пирог, в Квебеке – туртьер.' },
+                    { en: 'Boxing Day – December 26. Sales, leftovers from Christmas dinner.', ru: 'День подарков – 26 декабря. Распродажи, остатки рождественского ужина.' },
+                    { en: 'Poutine – iconic Quebec dish (fries, gravy, cheese curds).', ru: 'Путин – культовое квебекское блюдо (картофель фри с подливой и сырными творожками).' },
+                    { en: 'Jiggs dinner – Newfoundland tradition (salt beef with vegetables).', ru: 'Jiggs dinner – традиционное блюдо Ньюфаундленда (солёная говядина с овощами).' },
+                    { en: 'Maple Festival (March–April) – maple syrup tastings.', ru: 'Кленовый фестиваль (март-апрель) – дегустации кленового сиропа.' },
+                    { en: 'Ottawa Tulip Festival (May) – street food and tulips.', ru: 'Фестиваль тюльпанов в Оттаве (май) – уличная еда и тюльпаны.' },
+                    { en: 'Grey Cup (last Sunday of November) – Canadian football final, parties and snacks.', ru: 'Канадский футбольный финал (Grey Cup) – последнее воскресенье ноября, вечеринки.' }
+                ]
+            },
+            // ---- КАНАДА: ЛЮДИ ----
+            'canada-people': {
+                title: { en: '⭐ Famous People', ru: '⭐ Известные личности' },
+                facts: [
+                    { en: '<strong>Terry Fox</strong> – national hero, cancer activist.<br><img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/TerryFoxToronto19800712.JPG" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Терри Фокс</strong> – национальный герой, борец с раком.<br><img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/TerryFoxToronto19800712.JPG" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Wayne Gretzky</strong> – legendary hockey player.<br><img src="https://russian7.ru/wp-content/uploads/2016/08/1-13.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Уэйн Гретцки</strong> – великий хоккеист.<br><img src="https://russian7.ru/wp-content/uploads/2016/08/1-13.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Céline Dion</strong> – world‑renowned singer.<br><img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Céline_Dion_2012.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Селин Дион</strong> – всемирно известная певица.<br><img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Céline_Dion_2012.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Ryan Reynolds</strong> – actor, producer.<br><img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/245084fa-df63-44b2-9ef2-f096a96e03fa/576x" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Райан Рейнольдс</strong> – актёр и продюсер.<br><img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/245084fa-df63-44b2-9ef2-f096a96e03fa/576x" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Leonard Cohen</strong> – poet, novelist and singer.<br><img src="https://i.pinimg.com/736x/26/90/fd/2690fd95b20dff2cbd871e7ea7e54c1f.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Леонард Коэн</strong> – поэт, писатель и певец.<br><img src="https://i.pinimg.com/736x/26/90/fd/2690fd95b20dff2cbd871e7ea7e54c1f.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Margaret Atwood</strong> – novelist, Booker Prize winner.<br><img src="https://cdn-media.tass.ru/width/1200_4ce85301/tass/m2/uploads/i/20191119/5234755.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Маргарет Этвуд</strong> – писательница, лауреат Букеровской премии.<br><img src="https://cdn-media.tass.ru/width/1200_4ce85301/tass/m2/uploads/i/20191119/5234755.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Jim Carrey</strong> – comic actor.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Jim_Carrey_2020_cropped.jpg/960px-Jim_Carrey_2020_cropped.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Джим Керри</strong> – актёр-комик.<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Jim_Carrey_2020_cropped.jpg/960px-Jim_Carrey_2020_cropped.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' },
+                    { en: '<strong>Shania Twain</strong> – singer‑songwriter, Queen of Country Music.<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Shania_Twain_Glaston2024_2806_300624_%2830_of_173%29_%2853838111570%29_%28cropped%29.jpg" style="width:80px; border-radius:50%; margin-top:8px;">', ru: '<strong>Шания Твейн</strong> – певица, королева кантри.<br><img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Shania_Twain_Glaston2024_2806_300624_%2830_of_173%29_%2853838111570%29_%28cropped%29.jpg" style="width:80px; border-radius:50%; margin-top:8px;">' }
+                ]
+            }
+        };
+
+        // =================================================================
+        // 2. ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА
+        // =================================================================
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.body.classList.remove('lang-en', 'lang-ru');
+            document.body.classList.add('lang-' + lang);
+            document.querySelectorAll('#langToggle .lang-option').forEach(el => {
+                el.classList.toggle('active', el.dataset.lang === lang);
+            });
+            renderAllFacts();
+            renderAllCalendars();
+            if (document.getElementById('vpr-quiz').classList.contains('active')) {
+                if (currentQ < quizQuestions.length) loadQuestion();
+            }
+            try { localStorage.setItem('preferredLang', lang); } catch (_) {}
+        }
+
+        // =================================================================
+        // 3. ОТРИСОВКА ФАКТОВ
+        // =================================================================
+        function renderAllFacts() {
+            document.querySelectorAll('.knowledge-category[data-facts]').forEach(container => {
+                const key = container.dataset.facts;
+                const data = FACTS_DATA[key];
+                if (!data) return;
+                const lang = currentLang;
+                const title = data.title[lang] || data.title.en;
+                let facts = data.facts || [];
+                const sortedFacts = [...facts].sort((a, b) => {
+                    const yearA = extractYear(a[lang] || a.en || '');
+                    const yearB = extractYear(b[lang] || b.en || '');
+                    if (yearA !== null && yearB !== null) return yearA - yearB;
+                    if (yearA !== null) return -1;
+                    if (yearB !== null) return 1;
+                    return 0;
+                });
+                let html = `<h3>${title}</h3><div class="facts-list">`;
+                sortedFacts.forEach((item, idx) => {
+                    const text = item[lang] || item.en || '';
+                    if (text.includes('<img')) {
+                        html += `<div class="fact-item" style="flex-direction:column; align-items:flex-start; gap:8px;"><div class="fact-number">${idx + 1}</div><div class="fact-text">${text}</div></div>`;
+                    } else {
+                        html += `<div class="fact-item"><div class="fact-number">${idx + 1}</div><div class="fact-text">${text}</div></div>`;
+                    }
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            });
+        }
+
+        function extractYear(text) {
+            const match = text.match(/\b(\d{4})\b/);
+            return match ? parseInt(match[1], 10) : null;
+        }
+
+        // =================================================================
+        // 4. КАЛЕНДАРЬ ПРАЗДНИКОВ (очистка от лишних знаков)
+        // =================================================================
+        function renderAllCalendars() {
+            const countryIds = ['usa', 'uk', 'australia', 'newzealand', 'canada'];
+            countryIds.forEach(id => {
+                const container = document.getElementById(`calendar-${id}`);
+                if (!container) return;
+                const allFacts = [];
+                for (const key in FACTS_DATA) {
+                    if (key.startsWith(id)) {
+                        const data = FACTS_DATA[key];
+                        if (data && data.facts) {
+                            data.facts.forEach(f => {
+                                allFacts.push(f);
+                            });
+                        }
+                    }
+                }
+                const holidays = [];
+                const monthMap = {
+                    'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6,
+                    'july': 7, 'august': 8, 'september': 9, 'october': 10, 'november': 11, 'december': 12,
+                    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+                    'января': 1, 'февраля': 2, 'марта': 3, 'апреля': 4, 'мая': 5, 'июня': 6,
+                    'июля': 7, 'августа': 8, 'сентября': 9, 'октября': 10, 'ноября': 11, 'декабря': 12,
+                    'январь': 1, 'февраль': 2, 'март': 3, 'апрель': 4, 'май': 5, 'июнь': 6,
+                    'июль': 7, 'август': 8, 'сентябрь': 9, 'октябрь': 10, 'ноябрь': 11, 'декабрь': 12
+                };
+                allFacts.forEach(f => {
+                    const textEn = f.en || '';
+                    const textRu = f.ru || '';
+                    const texts = [textEn, textRu];
+                    texts.forEach((text, idx) => {
+                        const patterns = [
+                            /\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})(?:st|nd|rd|th)?\b/gi,
+                            /\b(\d{1,2})(?:st|nd|rd|th)?\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/gi,
+                            /\b(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\b/gi,
+                            /\b(январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь)\s+(\d{1,2})\b/gi
+                        ];
+                        for (let pattern of patterns) {
+                            let m;
+                            while ((m = pattern.exec(text)) !== null) {
+                                let monthStr, dayStr;
+                                if (m[1].match(/[a-zA-Zа-я]/i)) {
+                                    monthStr = m[1];
+                                    dayStr = m[2];
+                                } else {
+                                    dayStr = m[1];
+                                    monthStr = m[2];
+                                }
+                                const month = monthMap[monthStr.toLowerCase()];
+                                const day = parseInt(dayStr, 10);
+                                if (month && day >= 1 && day <= 31) {
+                                    const key = `${month}-${day}`;
+                                    if (!holidays.find(h => h.key === key)) {
+                                        holidays.push({
+                                            key: key,
+                                            month: month,
+                                            day: day,
+                                            en: textEn.trim(),
+                                            ru: textRu.trim()
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+
+                const uniqueHolidays = [];
+                const seen = new Set();
+                holidays.forEach(h => {
+                    if (!seen.has(h.key)) {
+                        seen.add(h.key);
+                        uniqueHolidays.push(h);
+                    }
+                });
+
+                uniqueHolidays.sort((a, b) => (a.month - b.month) || (a.day - b.day));
+
+                const groups = {};
+                const monthNamesEn = {
+                    1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
+                    7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December'
+                };
+                const monthNamesRu = {
+                    1: 'Январь', 2: 'Февраль', 3: 'Март', 4: 'Апрель', 5: 'Май', 6: 'Июнь',
+                    7: 'Июль', 8: 'Август', 9: 'Сентябрь', 10: 'Октябрь', 11: 'Ноябрь', 12: 'Декабрь'
+                };
+                uniqueHolidays.forEach(h => {
+                    if (!groups[h.month]) groups[h.month] = [];
+                    groups[h.month].push(h);
+                });
+
+                const lang = currentLang;
+                const monthNames = lang === 'en' ? monthNamesEn : monthNamesRu;
+                let html = `<h3><span class="lang-en-only">📅 Holiday Calendar</span><span class="lang-ru-only">📅 Календарь праздников</span></h3>`;
+                if (Object.keys(groups).length === 0) {
+                    html += `<p><span class="lang-en-only">No holidays with dates found.</span><span class="lang-ru-only">Праздники с датами не найдены.</span></p>`;
+                } else {
+                    html += `<div class="calendar-grid">`;
+                    for (let m = 1; m <= 12; m++) {
+                        if (groups[m]) {
+                            const monthName = monthNames[m];
+                            html += `<div class="calendar-month"><h4>${monthName}</h4><ul>`;
+                            groups[m].forEach(h => {
+                                let eventText = lang === 'en' ? (h.en || h.ru || '') : (h.ru || h.en || '');
+                                // Удаляем дату и лишние знаки препинания
+                                eventText = eventText.replace(/\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?\b\s*[.,:;]?\s*/gi, '');
+                                eventText = eventText.replace(/\d{1,2}(?:st|nd|rd|th)?\s+(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b\s*[.,:;]?\s*/gi, '');
+                                eventText = eventText.replace(/\b(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\b\s*[.,:;]?\s*/gi, '');
+                                eventText = eventText.replace(/\b(январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь)\s+\d{1,2}\b\s*[.,:;]?\s*/gi, '');
+                                eventText = eventText.trim();
+                                if (!eventText) eventText = lang === 'en' ? h.en : h.ru;
+                                html += `<li><span class="day">${h.day}</span><span class="event">${eventText}</span></li>`;
+                            });
+                            html += `</ul></div>`;
+                        }
+                    }
+                    html += `</div>`;
+                }
+                container.innerHTML = html;
+            });
+        }
+
+        // =================================================================
+        // 5. ТЕСТ
+        // =================================================================
+        const quizQuestions = [
+            { q: { en: 'Which US holiday is celebrated on the last Thursday of November?', ru: 'Какой праздник в Соединённых Штатах отмечается в последний четверг ноября?' },
+                options: { en: ['Independence Day', 'Thanksgiving', 'Labour Day', 'Memorial Day'],
+                    ru: ['День независимости', 'День благодарения', 'День труда', 'День памяти'] },
+                answer: 1,
+                explain: { en: 'Thanksgiving – fourth Thursday of November.', ru: 'День благодарения – четвёртый четверг ноября.' } },
+            { q: { en: 'Capital of which US state is Austin?', ru: 'Столицей какого штата Соединённых Штатов является город Остин?' },
+                options: { en: ['California', 'Texas', 'Florida', 'New York'],
+                    ru: ['Калифорния', 'Техас', 'Флорида', 'Нью-Йорк'] },
+                answer: 1,
+                explain: { en: 'Austin is the capital of Texas.', ru: 'Остин – столица Техаса.' } },
+            { q: { en: 'Which mountain is the highest point in North America?', ru: 'Какая гора является высочайшей точкой Северной Америки?' },
+                options: { en: ['Denali', 'Mount Logan', 'Mount Kosciuszko', 'Mount Cook'],
+                    ru: ['Денали', 'Логан', 'Косцюшко', 'Кука'] },
+                answer: 0,
+                explain: { en: 'Denali (6,190 m) – highest peak.', ru: 'Денали (6190 м) – высочайшая вершина.' } },
+            { q: { en: 'In which year was the US Declaration of Independence adopted?', ru: 'В каком году Соединённые Штаты приняли Декларацию независимости?' },
+                options: { en: ['1776', '1787', '1789', '1812'], ru: ['1776', '1787', '1789', '1812'] },
+                answer: 0,
+                explain: { en: '4 July 1776.', ru: '4 июля 1776.' } },
+            { q: { en: 'How many countries make up the United Kingdom?', ru: 'Из скольки стран состоит Соединённое Королевство?' },
+                options: { en: ['3', '4', '5', '6'], ru: ['3', '4', '5', '6'] },
+                answer: 1,
+                explain: { en: 'England, Scotland, Wales, Northern Ireland.', ru: 'Англия, Шотландия, Уэльс, Северная Ирландия.' } },
+            { q: { en: 'What is the capital of Scotland?', ru: 'Назовите столицу Шотландии.' },
+                options: { en: ['Glasgow', 'Edinburgh', 'Aberdeen', 'Dundee'],
+                    ru: ['Глазго', 'Эдинбург', 'Абердин', 'Данди'] },
+                answer: 1,
+                explain: { en: 'Edinburgh – capital of Scotland.', ru: 'Эдинбург – столица Шотландии.' } },
+            { q: { en: 'What is the national dish of the UK consisting of fish and fried potatoes?', ru: 'Какое национальное блюдо Соединённого Королевства – рыба с жареным картофелем?' },
+                options: { en: ['Fish and chips', 'Shepherd\'s pie', 'Haggis', 'Cawl'],
+                    ru: ['Фиш-энд-чипс', 'Пастуший пирог', 'Хаггис', 'Cawl'] },
+                answer: 0,
+                explain: { en: 'Fish and chips – classic British dish.', ru: 'Фиш-энд-чипс – классика британской кухни.' } },
+            { q: { en: 'Which holiday is celebrated in the UK on 5 November?', ru: 'Какой праздник отмечается в Соединённом Королевстве 5 ноября?' },
+                options: { en: ['Guy Fawkes Night', 'Remembrance Day', 'Boxing Day', 'May Day'],
+                    ru: ['Ночь Гая Фокса', 'День перемирия', 'День подарков', 'Майский день'] },
+                answer: 0,
+                explain: { en: 'Guy Fawkes Night – fireworks, effigies.', ru: 'Ночь Гая Фокса – фейерверки, чучела.' } },
+            { q: { en: 'Which holiday is celebrated in Australia on 26 January?', ru: 'Какой праздник отмечается в Австралии 26 января?' },
+                options: { en: ['ANZAC Day', 'Australia Day', 'Queen\'s Birthday', 'Remembrance Day'],
+                    ru: ['День АНЗАК', 'День Австралии', 'День рождения королевы', 'День памяти'] },
+                answer: 1,
+                explain: { en: 'Australia Day – arrival of First Fleet in 1788.', ru: 'День Австралии – прибытие Первого флота в 1788 году.' } },
+            { q: { en: 'Which symbol is on the Australian coat of arms with the kangaroo?', ru: 'Какой символ изображён на гербе Австралии вместе с кенгуру?' },
+                options: { en: ['Emu', 'Koala', 'Platypus', 'Dingo'], ru: ['Эму', 'Коала', 'Утконос', 'Динго'] },
+                answer: 0,
+                explain: { en: 'Kangaroo and emu – they cannot walk backwards.', ru: 'Кенгуру и эму – не умеют пятиться назад.' } },
+            { q: { en: 'What is the capital of the Australian state of Western Australia?', ru: 'Столица какого австралийского штата – Перт?' },
+                options: { en: ['Western Australia', 'South Australia', 'Queensland', 'Tasmania'],
+                    ru: ['Западная Австралия', 'Южная Австралия', 'Квинсленд', 'Тасмания'] },
+                answer: 0,
+                explain: { en: 'Perth is the capital of Western Australia.', ru: 'Перт – столица Западной Австралии.' } },
+            { q: { en: 'What is "Vegemite" in Australian culture?', ru: 'Что такое «веджимайт» в Австралии?' },
+                options: { en: ['Traditional dish', 'Yeast paste on bread', 'Drink', 'Dessert'],
+                    ru: ['Традиционное блюдо', 'Дрожжевая паста на хлеб', 'Напиток', 'Десерт'] },
+                answer: 1,
+                explain: { en: 'Vegemite – salty yeast paste.', ru: 'Веджимайт – солёная дрожжевая паста.' } },
+            { q: { en: 'What do Māori call New Zealand?', ru: 'Как маори называют Новую Зеландию?' },
+                options: { en: ['Aotearoa', 'Tuatara', 'Waitangi', 'Aoraki'],
+                    ru: ['Аотеароа', 'Туатара', 'Вайтанги', 'Аораки'] },
+                answer: 0,
+                explain: { en: 'Aotearoa – "Land of the Long White Cloud".', ru: 'Аотеароа – «Страна длинного белого облака».' } },
+            { q: { en: 'What traditional NZ dish is cooked in an earth oven?', ru: 'Какое традиционное блюдо Новой Зеландии готовится в земляной печи?' },
+                options: { en: ['Hāngī', 'Pavlova', 'Kūmara', 'Marmite'],
+                    ru: ['Ханги', 'Павлова', 'Кумэра', 'Мармайт'] },
+                answer: 0,
+                explain: { en: 'Hāngī – earth oven cooking.', ru: 'Ханги – приготовление в земляной печи.' } },
+            { q: { en: 'What is the capital of New Zealand?', ru: 'Столица Новой Зеландии?' },
+                options: { en: ['Auckland', 'Christchurch', 'Wellington', 'Dunedin'],
+                    ru: ['Окленд', 'Крайстчерч', 'Веллингтон', 'Данидин'] },
+                answer: 2,
+                explain: { en: 'Wellington – southernmost capital.', ru: 'Веллингтон – самая южная столица.' } },
+            { q: { en: 'Which Māori holiday is celebrated in late June as the Māori New Year?', ru: 'Какой праздник маори отмечается в конце июня как Новый год?' },
+                options: { en: ['Matariki', 'Waitangi', 'ANZAC', 'Pasifika'],
+                    ru: ['Матарики', 'Вайтанги', 'АНЗАК', 'Пасифика'] },
+                answer: 0,
+                explain: { en: 'Matariki – rising of the Pleiades.', ru: 'Матарики – восход Плеяд.' } },
+            { q: { en: 'In which year was the Canadian Confederation formed?', ru: 'В каком году была образована Канадская конфедерация?' },
+                options: { en: ['1867', '1776', '1901', '1931'], ru: ['1867', '1776', '1901', '1931'] },
+                answer: 0,
+                explain: { en: '1867 – Canada Day on July 1.', ru: '1867 – День Канады 1 июля.' } },
+            { q: { en: 'What dish is the hallmark of Quebec?', ru: 'Какое блюдо – визитная карточка Квебека?' },
+                options: { en: ['Poutine', 'Jiggs', 'Hāngī', 'Fish and chips'],
+                    ru: ['Путин', 'Джиггс', 'Ханги', 'Фиш-энд-чипс'] },
+                answer: 0,
+                explain: { en: 'Poutine – fries, cheese curds, gravy.', ru: 'Путин – картошка фри, сыр, подлива.' } },
+            { q: { en: 'How many provinces and territories make up Canada?', ru: 'Сколько провинций и территорий в Канаде?' },
+                options: { en: ['10 provinces, 3 territories', '12 provinces, 2 territories', '8 provinces, 5 territories',
+                        '9 provinces, 4 territories'
+                    ],
+                    ru: ['10 провинций, 3 территории', '12 провинций, 2 территории', '8 провинций, 5 территорий',
+                        '9 провинций, 4 территории'
+                    ] },
+                answer: 0,
+                explain: { en: '10 provinces, 3 territories.', ru: '10 провинций, 3 территории.' } },
+            { q: { en: 'Which sport is considered Canada\'s "religion"?', ru: 'Какой вид спорта считается «религией» Канады?' },
+                options: { en: ['Ice hockey', 'Lacrosse', 'Curling', 'Figure skating'],
+                    ru: ['Хоккей с шайбой', 'Лакросс', 'Кёрлинг', 'Фигурное катание'] },
+                answer: 0,
+                explain: { en: 'Ice hockey – most popular sport.', ru: 'Хоккей – самый популярный спорт.' } }
+        ];
+
+        let currentQ = 0;
+        let correctCount = 0;
+
+        function loadQuestion() {
+            const qData = quizQuestions[currentQ];
+            const lang = currentLang;
+            const qText = qData.q[lang] || qData.q.en;
+            const opts = qData.options[lang] || qData.options.en;
+            const expl = qData.explain[lang] || qData.explain.en;
+
+            document.getElementById('q-text').innerHTML =
+                `<span class="lang-en-only">Question ${currentQ+1}: </span><span class="lang-ru-only">Вопрос ${currentQ+1}: </span>${qText}`;
+
+            const optionsBlock = document.getElementById('options-block');
+            optionsBlock.innerHTML = '';
+            document.getElementById('explain-block').style.display = 'none';
+            document.getElementById('quiz-next-btn').style.display = 'none';
+
+            opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleQuizAnswer(idx, btn);
+                optionsBlock.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedIdx, clickedBtn) {
+            const qData = quizQuestions[currentQ];
+            const allButtons = document.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedIdx === qData.answer) {
+                clickedBtn.classList.add('correct');
+                correctCount++;
+            } else {
+                clickedBtn.classList.add('wrong');
+                allButtons[qData.answer].classList.add('correct');
+            }
+
+            const lang = currentLang;
+            const expl = qData.explain[lang] || qData.explain.en;
+            const explainBlock = document.getElementById('explain-block');
+            explainBlock.style.display = 'block';
+            explainBlock.innerHTML = `<strong>${lang === 'en' ? 'Explanation:' : 'Разбор задания:'}</strong> ${expl}`;
+            document.getElementById('quiz-next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                const total = quizQuestions.length;
+                const score = correctCount;
+                const lang = currentLang;
+                const resultText = lang === 'en' ?
+                    `You answered ${score} out of ${total} questions correctly.` :
+                    `Вы правильно ответили на ${score} из ${total} вопросов.`;
+                const gradeText = lang === 'en' ?
+                    (score === total ? 'Perfect!' : (score >= total * 0.7 ? 'Good!' : 'Keep learning!')) :
+                    (score === total ? 'Отлично!' : (score >= total * 0.7 ? 'Хорошо!' : 'Продолжайте учиться!'));
+
+                document.getElementById('quiz-block').innerHTML = `
+                        <div style="text-align:center; padding:20px 0;">
+                            <h3 style="color:#10b981; font-size:1.6rem; margin-bottom:10px;">
+                                <span class="lang-en-only">Quiz completed!</span>
+                                <span class="lang-ru-only">Тестирование завершено!</span>
+                            </h3>
+                            <p style="font-size:1.2rem; margin:10px 0;">${resultText}</p>
+                            <p style="font-size:1.1rem; color:${score === total ? '#10b981' : '#f59e0b'};">${gradeText}</p>
+                            <button onclick="location.reload()" class="next-btn" style="display:inline-block; margin-top:20px; background:#0052b4;">
+                                <span class="lang-en-only">Exit</span>
+                                <span class="lang-ru-only">Выйти</span>
+                            </button>
+                        </div>
+                    `;
+            }
+        }
+
+        // =================================================================
+        // 6. НАВИГАЦИЯ
+        // =================================================================
+        function initNavigation() {
+            const mainMenu = document.getElementById('mainMenu');
+            const countrySections = document.querySelectorAll('.country-page');
+
+            function showCountry(targetId) {
+                countrySections.forEach(s => s.classList.remove('active'));
+                const target = document.getElementById(targetId);
+                if (target) target.classList.add('active');
+                mainMenu.style.display = 'none';
+            }
+
+            function goHome() {
+                countrySections.forEach(s => s.classList.remove('active'));
+                mainMenu.style.display = 'block';
+                mainMenu.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            document.querySelectorAll('.flag-card[data-target]').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.dataset.target;
+                    showCountry(targetId);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            document.querySelectorAll('[data-go-home]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    goHome();
+                });
+            });
+        }
+
+        // =================================================================
+        // 7. КНОПКА "ВВЕРХ"
+        // =================================================================
+        function initScrollTop() {
+            const btn = document.getElementById('scrollToTopBtn');
+            let isVisible = false;
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY || window.pageYOffset;
+                if (scrollY > 300 && !isVisible) {
+                    btn.classList.add('visible');
+                    isVisible = true;
+                } else if (scrollY <= 300 && isVisible) {
+                    btn.classList.remove('visible');
+                    isVisible = false;
+                }
+            });
+            btn.addEventListener('click', function() {
+                const active = document.querySelector('.country-page.active');
+                if (active) active.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // =================================================================
+        // 8. ЗАПУСК
+        // =================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            let savedLang = 'en';
+            try {
+                const stored = localStorage.getItem('preferredLang');
+                if (stored === 'en' || stored === 'ru') savedLang = stored;
+            } catch (_) {}
+
+            document.getElementById('langToggle').addEventListener('click', function(e) {
+                const newLang = currentLang === 'en' ? 'ru' : 'en';
+                setLanguage(newLang);
+            });
+
+            setLanguage(savedLang);
+            initNavigation();
+            initScrollTop();
+            loadQuestion();
+            renderAllCalendars();
+        });
+    </script>
+</body>
+</html>
