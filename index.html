@@ -234,7 +234,7 @@
         }
         .symbols-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 24px;
             margin-bottom: 30px;
         }
@@ -591,8 +591,10 @@
                 <h3><span class="lang-en-only">Symbols & Sights</span><span class="lang-ru-only">Символы и достопримечательности</span></h3>
                 <div class="symbols-grid">
                     <div class="symbol-card"><img src="https://flagcdn.com/w640/gb.png" style="height:80px;" /><h4><span class="lang-en-only">Union Jack</span><span class="lang-ru-only">Юнион Джек</span></h4><p><span class="lang-en-only">Combines crosses of St George, St Andrew and St Patrick.</span><span class="lang-ru-only">Объединяет кресты св. Георгия, св. Андрея и св. Патрика.</span></p></div>
-                    <div class="symbol-card"><span class="icon">🌹</span><h4><span class="lang-en-only">Tudor Rose</span><span class="lang-ru-only">Роза Тюдоров</span></h4><p><span class="lang-en-only">Symbol of peace after the Wars of the Roses.</span><span class="lang-ru-only">Символ мира после войны Алой и Белой розы.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌹</span><h4><span class="lang-en-only">Tudor Rose</span><span class="lang-ru-only">Роза Тюдоров</span></h4><p><span class="lang-en-only">Symbol of England, peace after the Wars of the Roses.</span><span class="lang-ru-only">Символ Англии, мира после войны Алой и Белой розы.</span></p></div>
                     <div class="symbol-card"><span class="icon">🌿</span><h4><span class="lang-en-only">Thistle</span><span class="lang-ru-only">Чертополох</span></h4><p><span class="lang-en-only">Scottish symbol of resilience.</span><span class="lang-ru-only">Шотландский символ стойкости.</span></p></div>
+                    <div class="symbol-card"><span class="icon">🌼</span><h4><span class="lang-en-only">Daffodil</span><span class="lang-ru-only">Нарцисс</span></h4><p><span class="lang-en-only">National flower of Wales.</span><span class="lang-ru-only">Национальный цветок Уэльса.</span></p></div>
+                    <div class="symbol-card"><span class="icon">☘️</span><h4><span class="lang-en-only">Shamrock</span><span class="lang-ru-only">Трилистник</span></h4><p><span class="lang-en-only">Symbol of Northern Ireland.</span><span class="lang-ru-only">Символ Северной Ирландии.</span></p></div>
                 </div>
                 <h4 style="margin:20px 0 10px;"><span class="lang-en-only">Top Sights</span><span class="lang-ru-only">Главные достопримечательности</span></h4>
                 <div class="sights-grid">
@@ -711,7 +713,10 @@
                     <div class="quiz-q-title" id="q-text">Loading...</div>
                     <div class="quiz-options" id="options-block"></div>
                     <div class="quiz-explain" id="explain-block"></div>
-                    <button class="next-btn" id="quiz-next-btn" onclick="nextQuestion()">Next</button>
+                    <button class="next-btn" id="quiz-next-btn" onclick="nextQuestion()">
+                        <span class="lang-en-only">Next</span>
+                        <span class="lang-ru-only">Далее</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -957,7 +962,7 @@
                 title: { en: '🍽️ Culinary Traditions & Holidays', ru: '🍽️ Кулинарные традиции и праздники' },
                 facts: [
                     { en: 'New Year\'s Day – January 1. Parties, fireworks, "Auld Lang Syne".', ru: 'Новый год – 1 января. Вечеринки, фейерверки, «Auld Lang Syne».' },
-                    { en: 'St David\'s Day – March 1 (Wales). Daffodils, leek soup (cawl).', ru: 'День святого Давида – 1 марта (Уэльс). Нарциссы, суп из лука-порея (cawl).' },
+                    { en: 'St David\'s Day – March 1 (Wales). Daffodils, leek soup (cawl).', ru: 'День святого Давида – 1 марта (Уэльс). Нарциссы, суп из лука-порея (каул).' },  // исправлено cawl -> каул
                     { en: 'St Patrick\'s Day – March 17 (Northern Ireland). Green clothing, Irish lamb stew.', ru: 'День святого Патрика – 17 марта (Северная Ирландия). Зелёная одежда, ирландское рагу с бараниной.' },
                     { en: 'Good Friday (date varies) – traditional hot cross buns.', ru: 'Страстная пятница (дата меняется) – традиционные крестные булочки.' },
                     { en: 'Easter Sunday (date varies) – chocolate eggs, family dinner of lamb or ham.', ru: 'Пасха (дата меняется) – шоколадные яйца, семейный обед из баранины или ветчины.' },
@@ -1544,6 +1549,19 @@
                     });
                 });
 
+                // Если для Новой Зеландии не нашлось праздников, добавим базовые вручную
+                if (id === 'newzealand' && holidays.length === 0) {
+                    const fallback = [
+                        { key: '2-6', month: 2, day: 6, en: 'Waitangi Day', ru: 'День Вайтанги' },
+                        { key: '4-25', month: 4, day: 25, en: 'ANZAC Day', ru: 'День АНЗАК' },
+                        { key: '12-25', month: 12, day: 25, en: 'Christmas', ru: 'Рождество' },
+                        { key: '12-26', month: 12, day: 26, en: 'Boxing Day', ru: 'День подарков' },
+                        { key: '3-17', month: 3, day: 17, en: "St. Patrick's Day", ru: 'День Святого Патрика' },
+                        { key: '11-11', month: 11, day: 11, en: 'Remembrance Day', ru: 'День памяти' }
+                    ];
+                    fallback.forEach(h => holidays.push(h));
+                }
+
                 const uniqueHolidays = [];
                 const seen = new Set();
                 holidays.forEach(h => {
@@ -1634,7 +1652,7 @@
                 explain: { en: 'Edinburgh – capital of Scotland.', ru: 'Эдинбург – столица Шотландии.' } },
             { q: { en: 'What is the national dish of the UK consisting of fish and fried potatoes?', ru: 'Какое национальное блюдо Соединённого Королевства – рыба с жареным картофелем?' },
                 options: { en: ['Fish and chips', 'Shepherd\'s pie', 'Haggis', 'Cawl'],
-                    ru: ['Фиш-энд-чипс', 'Пастуший пирог', 'Хаггис', 'Cawl'] },
+                    ru: ['Фиш-энд-чипс', 'Пастуший пирог', 'Хаггис', 'Каул'] },
                 answer: 0,
                 explain: { en: 'Fish and chips – classic British dish.', ru: 'Фиш-энд-чипс – классика британской кухни.' } },
             { q: { en: 'Which holiday is celebrated in the UK on 5 November?', ru: 'Какой праздник отмечается в Соединённом Королевстве 5 ноября?' },
